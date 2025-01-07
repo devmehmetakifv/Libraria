@@ -1,0 +1,241 @@
+﻿@* @using StudentInformationSystem.Business.Abstract
+@using StudentInformationSystem.Entity.Concrete
+@model StudentInformationSystem.Entity.Concrete.CourseDepartmentViewModel
+@inject IDepartmentService IDepartmentService *@
+@{
+    var successMessage = TempData["SuccessMessage"] as string;
+    var failedMessage = TempData["FailedMessage"] as string;
+}
+@if (!string.IsNullOrEmpty(successMessage))
+{
+    <div class="alert alert-success" role="alert">
+        @successMessage
+    </div>
+}
+<nav>
+    <div class="nav nav-tabs" id="nav-tab" role="tablist">
+        <button class="nav-link active" id="nav-home-tab" data-bs-toggle="tab" data-bs-target="#nav-home" type="button" role="tab" aria-controls="nav-home" aria-selected="true">New Course...</button>
+        <button class="nav-link" id="nav-profile-tab" data-bs-toggle="tab" data-bs-target="#nav-profile" type="button" role="tab" aria-controls="nav-profile" aria-selected="false">Edit Course</button>
+        <button class="nav-link" id="nav-contact-tab" data-bs-toggle="tab" data-bs-target="#nav-contact" type="button" role="tab" aria-controls="nav-contact" aria-selected="false">Delete Course</button>
+    </div>
+</nav>
+<div class="tab-content" id="nav-tabContent">
+    <div class="tab-pane fade show active px-2" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
+        <div class="container">
+            <div class="card o-hidden border-0 shadow-lg my-5">
+                <div class="card-body p-0">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="p-5">
+                                <div class="text-center">
+                                    <h1 class="text-dark mb-4">Add New Course</h1>
+                                    <h6 class="text-dark mb-4">You can add a new course to a department from this panel.</h6>
+                                </div>
+                                <form id="registerForm" method="post" action="/Panel/AddNewCourse" class="user">
+                                    <div class="form-group row">
+                                        <div class="col-sm-9 mb-3 mb-sm-0">
+                                            <div class="form-floating mb-3">
+                                                <input class="form-control form-control-user" name="name" autocomplete="name" aria-required="true" placeholder="Name" />
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <div class="form-floating mb-3">
+                                                <input class="form-control form-control-user" name="credits" autocomplete="credits" aria-required="true" placeholder="Credits" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <div class="col-sm-6">
+                                            <div class="form-floating mb-3">
+                                                <input class="form-control form-control-user" name="description" autocomplete="description" aria-required="true" placeholder="Description" />
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-6" id="fillDepartmentNameDiv">
+                                            <div class="form-floating mb-3">
+                                                <select class="form-control custom-select text-dark" name="departmentName" aria-required="true">
+                                                    <option value="" selected disabled hidden>Department</option>
+@*                                                     @foreach (var department in Model.Departments)
+                                                    {
+                                                        <option value="@department.Name">@department.Name</option>
+                                                    } *@
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-12">
+                                            <div class="form-floating mb-3">
+                                                <button id="registerSubmit" type="submit" class="btn btn-primary btn-user btn-block">Add</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </form>
+                                <hr>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="tab-pane fade px-2" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">
+        <div class="row" id="bringCoursePanel">
+            <div class="container my-5 col-sm-6">
+                <div class="text-center">
+                    <h1 class="text-dark mb-4">Bring Course to Edit</h1>
+                    <h6 class="text-dark mb-4">Enter course's name to bring it.</h6>
+                </div>
+                <form method="POST" id="bringCourseForm">
+                    <div class="form-group row">
+                        <div class="col-sm-12 mb-3 mb-sm-0">
+                            <div class="form-floating mb-3">
+                                <input class="form-control form-control-user" autocomplete="courseName" id="inputCourseName" name="courseName" aria-required="true" placeholder="Course Name" />
+                            </div>
+                        </div>
+                        <div class="col-sm-12">
+                            <div class="form-floating mb-3">
+                                <button id="registerSubmit" type="submit" class="btn btn-primary btn-user btn-block">Bring</button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="row" id="courseDetails" style="display:none;">
+            <div class="container">
+                <div class="card o-hidden border-0 shadow-lg my-5">
+                    <div class="card-body p-0">
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <div class="p-5">
+                                    <div class="text-center">
+                                        <h1 class="text-dark mb-4">Edit <span id="edit-title"></span> Course</h1>
+                                    </div>
+                                    <form id="editCourseForm" method="POST" action="/Panel/EditCourse" class="user">
+                                        <div class="form-group row">
+                                            <input class="form-control form-control-user" id="fillCourseId" name="courseId" autocomplete="courseid" hidden />
+                                            <div class="col-sm-6 mb-3 mb-sm-0" id="fillCourseNameDiv">
+                                                <div class="form-floating mb-3">
+                                                    <input class="form-control form-control-user" id="fillCourseName" name="name" autocomplete="coursename" aria-required="true" placeholder="Course Name" required />
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-6" id="fillCourseDescriptionDiv">
+                                                <div class="form-floating mb-3">
+                                                    <input class="form-control form-control-user" id="fillCourseDescription" name="description" autocomplete="coursedescription" aria-required="true" placeholder="Course Description" required />
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-6" id="fillCreditsDiv">
+                                                <div class="form-floating mb-3">
+                                                    <input class="form-control form-control-user" id="fillCredits" name="credits" autocomplete="credits" aria-required="true" placeholder="Credits" required />
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-6" id="fillDepartmentNameDiv">
+                                                <div class="form-floating mb-3">
+                                                    <select class="form-control custom-select text-dark" id="fillDepartmentName" name="departmentName" aria-required="true">
+                                                        <option value="" selected disabled hidden>Department</option>
+@*                                                         @foreach (var department in Model.Departments)
+                                                        {
+                                                            <option value="@department.Name">@department.Name</option>
+                                                        } *@
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-12">
+                                                <div class="form-floating mb-3">
+                                                    <button id="registerSubmit" type="submit" class="btn btn-primary btn-user btn-block">Save</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </form>
+                                    <hr>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="tab-pane fade px-2" id="nav-contact" role="tabpanel" aria-labelledby="nav-contact-tab">
+        <div class="card shadow mt-5">
+            <div class="card-header">
+                <h6 class="m-0 font-weight-bold text-primary">Student List</h6>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                        <thead>
+                            <tr>
+                                <th>Delete</th>
+                                <th>Name</th>
+                                <th>Description</th>
+                                <th>Credits</th>
+                                <th>Department</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <form method="post">
+                                <th>
+                                    <button type="button"
+                                            class="btn delete-course-btn"
+                                            data-course-id="@* @course.ID *@">
+                                        <i class="fa fa-ban p-0 m-0" aria-hidden="true"></i>
+                                    </button>
+                                </th>
+                                </form>
+                                <td>@* @course.Name *@ Course Name</td>
+                                <td>@* @course.Description *@ Description</td>
+                                <td>@* @course.Credit *@ Credit</td>
+                                <td>@* @department.Name *@ Department Name</td>
+                            </tr>
+                            @* @foreach (var course in Model.Courses)
+                            {
+                                Department department = new Department();
+                                department = await IDepartmentService.GetByIdAsync(course.DepartmentID);
+                                <tr>
+                                    <form method="post">
+                                    <th>
+                                        <button type="button"
+                                                class="btn delete-course-btn"
+                                                data-course-id="@course.ID">
+                                            <i class="fa fa-ban p-0 m-0" aria-hidden="true"></i>
+                                        </button>
+                                    </th>
+                                    </form>
+                                    <td>@course.Name</td>
+                                    <td>@course.Description</td>
+                                    <td>@course.Credit</td>
+                                    <td>@department.Name</td>
+                                </tr>
+                            } *@
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <th>Delete</th>
+                                <th>Name</th>
+                                <th>Description</th>
+                                <th>Credits</th>
+                                <th>Department</th>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade shadow-lg justify-content-center" id="deleteCourseModal" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <form method="POST" action="/Panel/DeleteCourse" id="deleteCourseForm">
+                        <div class="form-group text-center">
+                            <h2 class="text-danger">Delete Course</h2>
+                            <h5 class="text-dark">You are about to delete the selected course. Do you want to proceed?</h5>
+                            <input name="deleteCourseId" type="hidden" id="deleteCourseId" />
+                            <button type="submit" class="btn btn-primary text-center">Delete</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
