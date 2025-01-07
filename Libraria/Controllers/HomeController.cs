@@ -20,16 +20,6 @@ namespace Libraria.Controllers
             return View();
         }
 
-        public IActionResult Privacy()
-        {
-            return View();
-        }
-
-        public IActionResult BookManagement()
-        {
-            return View();
-        }
-
         [HttpPost]
         public async Task<IActionResult> Logout()
         {

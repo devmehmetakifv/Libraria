@@ -1,0 +1,594 @@
+﻿@{
+    var successMessage = TempData["SuccessMessage"] as string;
+    var failedMessage = TempData["FailedMessage"] as string;
+}
+<head>
+    <!-- Custom styles for this page -->
+    <link href="~/vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
+</head>
+@if (!string.IsNullOrEmpty(successMessage))
+{
+    <div class="alert alert-success" role="alert">
+        @successMessage
+    </div>
+}
+<nav>
+    <div class="nav nav-tabs" id="nav-tab" role="tablist">
+        <button class="nav-link active" id="nav-home-tab" data-bs-toggle="tab" data-bs-target="#nav-home" type="button" role="tab" aria-controls="nav-home" aria-selected="true">New User...</button>
+        <button class="nav-link" id="nav-profile-tab" data-bs-toggle="tab" data-bs-target="#nav-profile" type="button" role="tab" aria-controls="nav-profile" aria-selected="false">Edit User</button>
+        <button class="nav-link" id="nav-contact-tab" data-bs-toggle="tab" data-bs-target="#nav-contact" type="button" role="tab" aria-controls="nav-contact" aria-selected="false">Delete User</button>
+    </div>
+</nav>
+<div class="tab-content" id="nav-tabContent">
+    <div class="tab-pane fade show active px-2" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
+        <div class="row">
+            <div class="col-3 my-5">
+                <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
+                    <button class="nav-link active" id="v-pills-home-tab" data-toggle="pill" data-target="#v-pills-home" type="button" role="tab" aria-controls="v-pills-home" aria-selected="true"><img src="/img/student.png" alt="New Student"><br /><b><p class="text-center" style="color:black;">Add New Student</p></b></button>
+                    <br />
+                    <button class="nav-link" id="v-pills-profile-tab" data-toggle="pill" data-target="#v-pills-profile" type="button" role="tab" aria-controls="v-pills-profile" aria-selected="false"><img src="/img/instructor.png" alt="New Instructor"><br /><b><p class="text-center" style="color:black;">Add New Instructor</p></b></button>
+                </div>
+            </div>
+            <div class="col-9">
+                <div class="tab-content" id="v-pills-tabContent">
+                    @**@ <div class="tab-pane fade show active" id="v-pills-home" role="tabpanel" aria-labelledby="v-pills-home-tab">
+                        <div class="container">
+                            <div class="card o-hidden border-0 shadow-lg my-5">
+                                <div class="card-body p-0">
+                                    <div class="row">
+                                        <div class="col-lg-12">
+                                            <div class="p-5">
+                                                <div class="text-center">
+                                                    <h1 class="text-dark mb-4">Register New Student</h1>
+                                                    <h6 class="text-dark mb-4">You can register a new student to the system from this panel.</h6>
+                                                </div>
+                                                <form id="registerForm" method="post" action="/Panel/AddNewStudent" class="user">
+                                                    <div class="form-group row">
+                                                        <div class="col-sm-6 mb-3 mb-sm-0">
+                                                            <div class="form-floating mb-3">
+                                                                <input class="form-control form-control-user" autocomplete="firstName" name="firstName" aria-required="true" placeholder="First Name" />
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-sm-6">
+                                                            <div class="form-floating mb-3">
+                                                                <input class="form-control form-control-user" autocomplete="lastname" name="lastName" aria-required="true" placeholder="Last Name" />
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-sm-6">
+                                                            <div class="form-floating mb-3">
+                                                                <input class="form-control form-control-user" autocomplete="gender" name="gender" aria-required="true" placeholder="Gender" />
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-sm-6 mb-3 mb-sm-0">
+                                                            <div class="form-floating mb-3">
+                                                                <input class="form-control form-control-user" autocomplete="contact" name="contact" aria-required="true" placeholder="Contact Address" />
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-sm-6">
+                                                            <div class="form-floating mb-3">
+                                                                <select class="form-control custom-select text-dark" name="programName" aria-required="true">
+                                                                    <option value="" selected disabled hidden>Program</option>
+                                                                    <option value="@* @program.Name *@ ProgramName">@* @program.Name *@ programName</option>
+                                                                    @* @foreach (var program in Model.Programs)
+                                                                    {
+                                                                        <option value="@program.Name">@program.Name</option>
+                                                                    } *@
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-sm-6">
+                                                            <div class="form-floating mb-3">
+                                                                <input type="text" id="dateofbirth" name="dateOfBirth" class="form-control form-control-user" placeholder="Date of Birth" onfocus="(this.type='date')">
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-sm-6">
+                                                            <div class="form-floating mb-3">
+                                                                <input class="form-control form-control-user" name="email" autocomplete="username" aria-required="true" placeholder="Email" />
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-sm-6">
+                                                            <div class="form-floating mb-3">
+                                                                <input class="form-control form-control-user" name="phoneNumber" autocomplete="phoneNumber" aria-required="true" placeholder="Phone Number" />
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-sm-6">
+                                                            <div class="form-floating mb-3">
+                                                                <input class="form-control form-control-user" name="password" autocomplete="new-password" aria-required="true" placeholder="Password" />
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-sm-6">
+                                                            <div class="form-floating mb-3">
+                                                                <input class="form-control form-control-user" name="confirmPassword" autocomplete="confirmpassword" aria-required="true" placeholder="Confirm Password" />
+                                                            </div>
+                                                        </div>
+                                                        <button id="registerSubmit" type="submit" class="btn btn-primary btn-user btn-block">Save</button>
+                                                    </div>
+                                                </form>
+                                                <hr>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div> @*Add New Student Form*@
+
+                    @**@ <div class="tab-pane fade" id="v-pills-profile" role="tabpanel" aria-labelledby="v-pills-profile-tab">
+                        <div class="container">
+                            <div class="card o-hidden border-0 shadow-lg my-5">
+                                <div class="card-body p-0">
+                                    <div class="row">
+                                        <div class="col-lg-12">
+                                            <div class="p-5">
+                                                <div class="text-center">
+                                                    <h1 class="text-dark mb-4">Register New Instructor</h1>
+                                                    <h6 class="text-dark mb-4">You can register a new instructor to the system from this panel.</h6>
+                                                </div>
+                                                <form id="registerForm" method="post" action="/Panel/AddNewInstructor" class="user">
+                                                    <div class="form-group row">
+                                                        <div class="col-sm-6 mb-3 mb-sm-0">
+                                                            <div class="form-floating mb-3">
+                                                                <input class="form-control form-control-user" name="firstName" autocomplete="firstname" aria-required="true" placeholder="First Name" />
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-sm-6">
+                                                            <div class="form-floating mb-3">
+                                                                <input class="form-control form-control-user" name="lastName" autocomplete="lastname" aria-required="true" placeholder="Last Name" />
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-sm-6">
+                                                            <div class="form-floating mb-3">
+                                                                <input class="form-control form-control-user" name="gender" autocomplete="gender" aria-required="true" placeholder="Gender" />
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-sm-6 mb-3 mb-sm-0">
+                                                            <div class="form-floating mb-3">
+                                                                <input class="form-control form-control-user" name="contact" autocomplete="contact" aria-required="true" placeholder="Contact Address" />
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-sm-6">
+                                                            <div class="form-floating mb-3">
+                                                                <select class="form-control custom-select text-dark" name="departmentName" aria-required="true">
+                                                                    <option value="" selected disabled hidden>Department</option>
+                                                                    <option value="@* @department.Name *@ departmentName">@* @department.Name *@ departmentName</option>
+@*                                                                     @foreach (var department in Model.Departments)
+                                                                    {
+                                                                        <option value="@department.Name">@department.Name</option>
+                                                                    } *@
+                                                                </select>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="col-sm-6">
+                                                            <div class="form-floating mb-3">
+                                                                <input type="text" id="hiredate" name="hireDate" class="form-control form-control-user" placeholder="Hire Date" onfocus="(this.type='date')">
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-sm-6">
+                                                            <div class="form-floating mb-3">
+                                                                <input type="text" id="dateofbirth" name="dateOfBirth" class="form-control form-control-user" placeholder="Date of Birth" onfocus="(this.type='date')">
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-sm-6">
+                                                            <div class="form-floating mb-3">
+                                                                <input class="form-control form-control-user" name="phoneNumber" autocomplete="phoneNumber" aria-required="true" placeholder="Phone Number" />
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-sm-6">
+                                                            <div class="form-floating mb-3">
+                                                                <input class="form-control form-control-user" name="email" autocomplete="username" aria-required="true" placeholder="Email" />
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-sm-6">
+                                                            <div class="form-floating mb-3">
+                                                                <input class="form-control form-control-user" name="password" autocomplete="new-password" aria-required="true" placeholder="Password" />
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-sm-6">
+                                                            <div class="form-floating mb-3">
+                                                                <input class="form-control form-control-user" name="confirmPassword" autocomplete="confirmPassword" aria-required="true" placeholder="Confirm Password" />
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-sm-6">
+                                                            <div class="form-floating mb-3">
+                                                                <button id="registerSubmit" type="submit" class="btn btn-primary btn-user btn-block">Save</button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </form>
+                                                <hr>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div> @*Add New Instructor Form*@
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="tab-pane fade px-2" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">
+        <div class="row" id="bringUserPanel">
+            <div class="container my-5 col-sm-6">
+                <div class="text-center">
+                    <h1 class="text-dark mb-4">Bring User to Edit</h1>
+                    <h6 class="text-dark mb-4">Enter user's firstname and lastname to bring them.</h6>
+                </div>
+                <form method="POST" id="bringUserForm">
+                    <div class="form-group row">
+                        <div class="col-sm-12 mb-3 mb-sm-0">
+                            <div class="form-floating mb-3">
+                                <input class="form-control form-control-user" autocomplete="firstName" id="inputFirstName" name="firstName" aria-required="true" placeholder="First Name" />
+                            </div>
+                        </div>
+                        <div class="col-sm-12">
+                            <div class="form-floating mb-3">
+                                <input class="form-control form-control-user" autocomplete="lastname" id="inputLastName" name="lastName" aria-required="true" placeholder="Last Name" />
+                            </div>
+                        </div>
+                        <div class="col-sm-12">
+                            <div class="form-floating mb-3">
+                                <button id="registerSubmit" type="submit" class="btn btn-primary btn-user btn-block">Bring</button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="row" id="userDetails" style="display:none;">
+            <div class="container">
+                <div class="card o-hidden border-0 shadow-lg my-5">
+                    <div class="card-body p-0">
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <div class="p-5">
+                                    <div class="text-center">
+                                        <h1 class="text-dark mb-4">Edit <span id="edit-title"></span>'s Profile</h1>
+                                    </div>
+                                    <form id="editUserForm" method="post" action="/Panel/EditUser" class="user">
+                                        <div class="form-group row">
+                                            <input class="form-control form-control-user" id="fillUserId" name="userId" autocomplete="userid" hidden />
+                                            <div class="col-sm-6 mb-3 mb-sm-0" id="fillFirstNameDiv">
+                                                <div class="form-floating mb-3">
+                                                    <input class="form-control form-control-user" id="fillFirstName" name="firstName" autocomplete="firstname" aria-required="true" placeholder="First Name" required />
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-6" id="fillLastNameDiv">
+                                                <div class="form-floating mb-3">
+                                                    <input class="form-control form-control-user" id="fillLastName" name="lastName" autocomplete="lastname" aria-required="true" placeholder="Last Name" required />
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-6" id="fillGenderDiv">
+                                                <div class="form-floating mb-3">
+                                                    <input class="form-control form-control-user" id="fillGender" name="gender" autocomplete="gender" aria-required="true" placeholder="Gender" required />
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-6 mb-3 mb-sm-0" id="fillContactDiv">
+                                                <div class="form-floating mb-3">
+                                                    <input class="form-control form-control-user" id="fillContact" name="contact" autocomplete="contact" aria-required="true" placeholder="Contact Address" required />
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-6" id="fillDepartmentNameDiv">
+                                                <div class="form-floating mb-3">
+                                                    <select class="form-control custom-select text-dark" id="fillDepartmentName" name="departmentName" aria-required="true">
+                                                        <option value="" selected disabled hidden>Department</option>
+                                                        <option value="@* @department.Name *@ departmentName">@* @department.Name *@ departmentName</option>
+@*                                                         @foreach (var department in Model.Departments)
+                                                        {
+                                                            <option value="@department.Name">@department.Name</option>
+                                                        } *@
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-6" id="fillProgramNameDiv">
+                                                <div class="form-floating mb-3">
+                                                    <select class="form-control custom-select text-dark" id="fillProgramName" name="programName" aria-required="true">
+                                                        <option value="" selected disabled hidden>Program</option>
+                                                        <option value="@* @program.Name *@ programName">@* @program.Name *@ programName</option>
+@*                                                         @foreach (var program in Model.Programs)
+                                                        {
+                                                            <option value="@program.Name">@program.Name</option>
+                                                        } *@
+                                                    </select>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-sm-6" id="fillHireDateDiv">
+                                                <div class="form-floating mb-3">
+                                                    <input type="text" id="fillHireDate" name="hireDate" class="form-control form-control-user" placeholder="Hire Date" onfocus="(this.type='date')">
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-6" id="fillDateOfBirthDiv">
+                                                <div class="form-floating mb-3">
+                                                    <input type="text" id="fillDateOfBirth" name="dateOfBirth" class="form-control form-control-user" placeholder="Date of Birth" onfocus="(this.type='date')" required />
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-6" id="fillPhoneNumberDiv">
+                                                <div class="form-floating mb-3">
+                                                    <input class="form-control form-control-user" id="fillPhoneNumber" name="phoneNumber" autocomplete="phoneNumber" aria-required="true" placeholder="Phone Number" reqired />
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-6" id="fillEmailDiv">
+                                                <div class="form-floating mb-3">
+                                                    <input class="form-control form-control-user" id="fillEmail" name="email" autocomplete="username" aria-required="true" placeholder="Email" required />
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-6">
+                                                <div class="form-floating mb-3">
+                                                    <button id="registerSubmit" type="submit" class="btn btn-primary btn-user btn-block">Save</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </form>
+                                    <hr>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="tab-pane fade px-2" id="nav-contact" role="tabpanel" aria-labelledby="nav-contact-tab">
+        @{
+            List<User> students = new List<User>();
+            List<User> instructors = new List<User>();
+            List<User> admins = new List<User>();
+
+            // foreach (var user in Model.Users)
+            // {
+            //     switch (user)
+            //     {
+            //         case 1:
+            //             admins.Add(user);
+            //             break;
+            //         case 2:
+            //             students.Add(user);
+            //             break;
+            //         case 3:
+            //             instructors.Add(user);
+            //             break;
+            //     }
+            // }
+        }
+        <div class="tab-pane fade show active px-2" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
+            <div class="row">
+                <div class="col-3 my-5">
+                    <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
+                        <button class="nav-link active" id="v-pills-home-tab" data-toggle="pill" data-target="#listStudents" type="button" role="tab" aria-controls="v-pills-home" aria-selected="true"><img src="/img/student.png" alt="New Student"><br /><b><p class="text-center" style="color:black;">List Students</p></b></button>
+                        <br />
+                        <button class="nav-link my-5" id="v-pills-profile-tab" data-toggle="pill" data-target="#listInstructors" type="button" role="tab" aria-controls="v-pills-profile" aria-selected="false"><img src="/img/instructor.png" alt="New Instructor"><br /><b><p class="text-center" style="color:black;">List Instructors</p></b></button>
+                        <br />
+                        <button class="nav-link my-5" id="v-pills-profile-tab" data-toggle="pill" data-target="#listAdmins" type="button" role="tab" aria-controls="v-pills-profile" aria-selected="false"><img src="/img/admin.png" alt="New Instructor"><br /><b><p class="text-center" style="color:black;">List Admins</p></b></button>
+                    </div>
+                </div>
+                <div class="col-9">
+                    <div class="tab-content" id="v-pills-tabContent">
+                        @**@ <div class="tab-pane fade show active" id="listStudents" role="tabpanel" aria-labelledby="v-pills-home-tab">@*Add New Student Form*@
+                            <div class="card shadow mt-5">
+                                <div class="card-header">
+                                    <h6 class="m-0 font-weight-bold text-primary">Student List</h6>
+                                </div>
+                                <div class="card-body">
+                                    <div class="table-responsive">
+                                        <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                                            <thead>
+                                                <tr>
+                                                    <th>Delete</th>
+                                                    <th>First Name</th>
+                                                    <th>Last Name</th>
+                                                    <th>Gender</th>
+                                                    <th>Contact</th>
+                                                    <th>Email</th>
+                                                    <th>Date of Birth</th>
+                                                    <th>Program</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @foreach (var student in students)
+                                                {
+                                                    @* Program studentProgram = new Program();
+                                                    if (student.ProgramID.HasValue)
+                                                    {
+                                                        studentProgram = await IProgramService.GetByIdAsync(student.ProgramID.Value);
+                                                    } *@
+                                                    <tr>
+                                                        <form method="post">
+                                                        <th>
+                                                            <button type="button"
+                                                                    class="btn delete-user-btn"
+                                                                    data-user-id="@* @student.Id *@ studentId">
+                                                                <i class="fa fa-ban p-0 m-0" aria-hidden="true"></i>
+                                                            </button>
+                                                        </th>
+                                                        </form>
+                                                        <td>@* @student.FirstName *@ FirstName</td>
+                                                        <td>@* @student.LastName *@ LastName</td>
+                                                        <td>@* @student.Gender *@ Gender</td>
+                                                        <td>@* @student.Contact *@ Contact</td>
+                                                        <td>@* @student.Email *@ Email</td>
+                                                        <td>@* @student.DateOfBirth *@ DateOfBirth</td>
+                                                        <td>@* @studentProgram.Name *@ Name</td>
+                                                    </tr>
+                                                }
+                                            </tbody>
+                                            <tfoot>
+                                                <tr>
+                                                    <th>Delete</th>
+                                                    <th>First Name</th>
+                                                    <th>Last Name</th>
+                                                    <th>Gender</th>
+                                                    <th>Contact</th>
+                                                    <th>Email</th>
+                                                    <th>Date of Birth</th>
+                                                    <th>Program</th>
+                                                </tr>
+                                            </tfoot>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        @**@ <div class="tab-pane fade" id="listInstructors" role="tabpanel" aria-labelledby="v-pills-profile-tab">@*Add New Instructor Form*@
+                            <div class="card shadow mt-5">
+                                <div class="card-header">
+                                    <h6 class="m-0 font-weight-bold text-primary">Instructor List</h6>
+                                </div>
+                                <div class="card-body">
+                                    <div class="table-responsive">
+                                        <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                                            <thead>
+                                                <tr>
+                                                    <th>Delete</th>
+                                                    <th>First Name</th>
+                                                    <th>Last Name</th>
+                                                    <th>Gender</th>
+                                                    <th>Contact</th>
+                                                    <th>Email</th>
+                                                    <th>Date of Birth</th>
+                                                    <th>Hire Date</th>
+                                                    <th>Department</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @foreach (var instructor in instructors)
+                                                {
+                                                    @* Department instructorDepartment = new Department();
+                                                    if (instructor.DepartmentID.HasValue)
+                                                    {
+                                                        instructorDepartment = await IDepartmentService.GetByIdAsync(instructor.DepartmentID.Value);
+                                                    } *@
+                                                    <tr>
+                                                        <form method="post">
+                                                        <th>
+                                                            <button type="button"
+                                                                    class="btn delete-user-btn"
+                                                                    data-user-id="@* @instructor.Id *@ instructorId">
+                                                                <i class="fa fa-ban p-0 m-0" aria-hidden="true"></i>
+                                                            </button>
+                                                        </th>
+                                                        </form>
+                                                        <td>@* @instructor.FirstName *@ FirstName</td>
+                                                        <td>@* @instructor.LastName *@ LastName</td>
+                                                        <td>@* @instructor.Gender *@ Gender</td>
+                                                        <td>@* @instructor.Contact *@ Contact</td>
+                                                        <td>@* @instructor.Email *@ Email</td>
+                                                        <td>@* @instructor.DateOfBirth *@ DateOfBirth</td>
+                                                        <td>@* @instructor.HireDate *@ HireDate</td>
+                                                        <td>@* @instructorDepartment.Name *@ InstructorDepartmentName</td>
+                                                    </tr>
+                                                }
+                                            </tbody>
+                                            <tfoot>
+                                                <tr>
+                                                    <th>Delete</th>
+                                                    <th>First Name</th>
+                                                    <th>Last Name</th>
+                                                    <th>Gender</th>
+                                                    <th>Contact</th>
+                                                    <th>Email</th>
+                                                    <th>Date of Birth</th>
+                                                    <th>Hire Date</th>
+                                                    <th>Department</th>
+                                                </tr>
+                                            </tfoot>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        @**@ <div class="tab-pane fade" id="listAdmins" role="tabpanel" aria-labelledby="v-pills-profile-tab">@*Add New Instructor Form*@
+                            <div class="card shadow mt-5">
+                                <div class="card-header">
+                                    <h6 class="m-0 font-weight-bold text-primary">Admin List</h6>
+                                </div>
+                                <div class="card-body">
+                                    <div class="table-responsive">
+                                        <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                                            <thead>
+                                                <tr>
+                                                    <th>Delete</th>
+                                                    <th>First Name</th>
+                                                    <th>Last Name</th>
+                                                    <th>Gender</th>
+                                                    <th>Contact</th>
+                                                    <th>Email</th>
+                                                    <th>Date of Birth</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @foreach (var admin in admins)
+                                                {
+                                                    <tr>
+                                                        <form method="post">
+                                                        <th>
+                                                            <button type="button"
+                                                                    class="btn delete-user-btn"
+                                                                    data-user-id="@* @admin.Id *@ adminId">
+                                                                <i class="fa fa-ban p-0 m-0" aria-hidden="true"></i>
+                                                            </button>
+                                                        </th>
+                                                        </form>
+                                                        <td>@* @admin.FirstName *@ FirstName</td>
+                                                        <td>@* @admin.LastName *@ LastName</td>
+                                                        <td>@* @admin.Gender *@ Gender</td>
+                                                        <td>@* @admin.Contact *@ Contact</td>
+                                                        <td>@* @admin.Email *@ Email</td>
+                                                        <td>@* @admin.DateOfBirth *@ DateOfBirth</td>
+                                                    </tr>
+                                                }
+                                            </tbody>
+                                            <tfoot>
+                                                <tr>
+                                                    <th>Delete</th>
+                                                    <th>First Name</th>
+                                                    <th>Last Name</th>
+                                                    <th>Gender</th>
+                                                    <th>Contact</th>
+                                                    <th>Email</th>
+                                                    <th>Date of Birth</th>
+                                                </tr>
+                                            </tfoot>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal fade shadow-lg justify-content-center" id="deleteUserModal" tabindex="-1" role="dialog">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-body">
+                        <form method="POST" action="/Panel/DeleteUser" id="deleteUserForm">
+                            <div class="form-group text-center">
+                                <h2 class="text-danger">Delete User</h2>
+                                <h5 class="text-dark">You are about to delete the selected user. Do you want to proceed?</h5>
+                                <input name="deleteUserId" type="hidden" id="deleteUserId" />
+                                <button type="submit" class="btn btn-primary text-center">Delete</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<style>
+    /* Custom CSS to remove borders from nav-pills */
+    .nav-pills .nav-link {
+        border: none !important; /* Removes the border */
+        background-color: rgb(239, 239, 239);
+        box-shadow: 4px 4px 4px rgb(200, 200, 200) !important;
+    }
+
+        /* Optional: Add a custom background color and text color for active state */
+        .nav-pills .nav-link.active {
+            color: white !important;
+        }
+</style>
