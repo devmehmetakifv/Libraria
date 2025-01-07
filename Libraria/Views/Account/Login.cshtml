@@ -1,54 +1,55 @@
-﻿@* Views/Account/Login.cshtml *@
-@{
-    ViewData["Title"] = "Login";
-}
+﻿
 
-@if (ViewBag.Message != null)
-{
-    <div class="alert alert-danger">@ViewBag.Message</div>
+@{
+    ViewData["Title"] = "Log in";
 }
 
 <div class="container mt-5">
-    <div class="row justify-content-center">
-        <div class="col-md-6">
-            <div class="card">
-                <div class="card-header">
-                    <h2 class="text-center">Giriş Yap</h2>
+    @if (ViewBag.Message != null)
+    {
+        <div class="alert alert-danger">@ViewBag.Message</div>
+    }
+
+    <div class="card o-hidden border-5 shadow-lg my-5 rounded-5">
+        <div class="card-body p-0">
+            <!-- Nested Row within Card Body -->
+            <div class="row justify-content-center">
+                <div class="col-lg-5 d-none d-lg-block bg-register-image text-center">
+                    <img src="/img/login-image.png" alt="Login Image" style="width:300px; height:400px;" class="ml-5">
                 </div>
-                <div class="card-body">
-                    <form method="post" action="/Account/Login">
-                        <div class="form-group">
-                            <label for="email">Email:</label>
-                            <input type="email" class="form-control" id="email" name="email" required />
+                <div class="col-lg-7">
+                    <div class="p-5">
+                        <div class="text-center">
+                            <h1 class="h4 text-gray-900 mb-4">Login to Student Information System!</h1>
                         </div>
-                        <div class="form-group">
-                            <label for="password">Şifre:</label>
-                            <input type="password" class="form-control" id="password" name="password" required />
+                        <form method="post" action="/Account/Login" class="user">
+                            <div class="form-group row">
+                                <div class="col-sm-6">
+                                    <div class="form-floating mb-3">
+                                        <input type="email" id="email" name="email" class="form-control form-control-user" autocomplete="username" aria-required="true" placeholder="Email" required />
+                                        
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="form-floating mb-3">
+                                        <input type="password" id="password" name="password" class="form-control form-control-user" autocomplete="new-password" aria-required="true" placeholder="Password" required />
+                                        
+                                    </div>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-primary btn-user btn-block">Login</button>
+                        </form>
+                        <hr>
+                        <div class="text-center">
+                            <a class="small" href="/Account/Register">Don't have an account? Register!</a>
                         </div>
-                        <button type="submit" class="btn btn-primary btn-block mt-3">Giriş</button>
-                    </form>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
 
-<style>
-    .container {
-        margin-top: 50px;
-    }
-
-    .card {
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    }
-
-    .card-header {
-        background-color: #007bff;
-        color: white;
-    }
-
-    .btn-primary {
-        background-color: #007bff;
-        border-color: #007bff;
-    }
-</style>
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

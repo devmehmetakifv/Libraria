@@ -27,7 +27,7 @@
         }
 
         // Query the database using Dapper
-        var query = "SELECT * FROM Users WHERE Id = @UserId OR Email = @Email";
+        var query = "SELECT * FROM UserTable WHERE UserID = @UserId OR Email = @Email";
         user = DbConnection.QueryFirstOrDefault<User>(query, new { UserId = userId, Email = userEmail });
 
         if (user == null)
