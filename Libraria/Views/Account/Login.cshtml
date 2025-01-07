@@ -1,0 +1,19 @@
+﻿@* Views/Account/Login.cshtml *@
+@if (ViewBag.Message != null)
+{
+    <div style="color:red;">@ViewBag.Message</div>
+}
+
+<h2>Giriş Yap</h2>
+
+<form method="post" action="/Account/Login">
+    <div>
+        <label>Kullanıcı Adı:</label>
+        <input type="text" name="username" required />
+    </div>
+    <div>
+        <label>Şifre:</label>
+        <input type="password" name="password" required />
+    </div>
+    <button type="submit">Giriş</button>
+</form>
