@@ -1,25 +1,43 @@
-﻿@*
-    Roles:
-    1: Admin
-    2: Student
-    3: Instructor
-*@
-
+﻿@using Dapper
 @using Microsoft.AspNetCore.Identity
-@* @using StudentInformationSystem.Business.Abstract
-@using StudentInformationSystem.Entity.Concrete *@
-
-@* @inject SignInManager<User> SignInManager
-@inject UserManager<User> UserManager
+@using System.Data
+@using System.Security.Claims
+@inject IHttpContextAccessor HttpContextAccessor
+@inject IDbConnection DbConnection
+@{User user = null;}
 @{
-    if (!SignInManager.IsSignedIn(User))
+    var claimsPrincipal = HttpContextAccessor.HttpContext?.User;
+    if (claimsPrincipal == null || !claimsPrincipal.Identity.IsAuthenticated)
     {
         <script>
             window.location.href = "/Identity/Account/Login";
         </script>
     }
-    var user = await UserManager.GetUserAsync(User);
-} *@
+    else
+    {
+        // Retrieve the user identifier (e.g., UserId or Email) from the claims
+        var userId = claimsPrincipal.Claims.FirstOrDefault(c => c.Type == "UserId")?.Value;
+        var userEmail = claimsPrincipal.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
+
+        if (string.IsNullOrEmpty(userId) && string.IsNullOrEmpty(userEmail))
+        {
+            <script>
+                window.location.href = "/Identity/Account/Login";
+            </script>
+        }
+
+        // Query the database using Dapper
+        var query = "SELECT * FROM Users WHERE Id = @UserId OR Email = @Email";
+        user = DbConnection.QueryFirstOrDefault<User>(query, new { UserId = userId, Email = userEmail });
+
+        if (user == null)
+        {
+            <script>
+                window.location.href = "/Identity/Account/Login";
+            </script>
+        }
+    }
+}
 
 <!DOCTYPE html>
 <html lang="en">
