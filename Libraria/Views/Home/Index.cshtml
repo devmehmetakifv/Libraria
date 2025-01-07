@@ -1,81 +1,105 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    Layout = "~/Views/Shared/_indexLayout.cshtml";
+    ViewData["Title"] = "Library Management System";
 }
 
 <style>
     body {
-        font-family: Arial, sans-serif;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         margin: 0;
         padding: 0;
-        background-color: #f4f4f9;
-        color: #333;
+        background-color: #f0f4fc;
+        color: #2c3e50;
     }
 
-    h1 {
-        text-align: center;
-        padding: 20px;
-        background-color: #6200ea;
+    header {
+        background-color: #4e73df;
         color: #fff;
-        margin: 0;
+        text-align: center;
+        padding: 30px 20px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     }
+
+        header h1 {
+            font-size: 2.5em;
+            font-weight: 600;
+            margin: 0;
+        }
+
+        header p {
+            font-size: 1.2em;
+            margin: 5px 0 0;
+            font-style: italic;
+        }
 
     #getBooksButton {
         display: block;
-        margin: 20px auto;
-        padding: 10px 20px;
-        font-size: 16px;
+        margin: 30px auto;
+        padding: 12px 25px;
+        font-size: 18px;
         color: #fff;
-        background-color: #6200ea;
+        background-color: #5a8dee;
         border: none;
-        border-radius: 5px;
+        border-radius: 6px;
         cursor: pointer;
+        transition: background-color 0.3s ease, transform 0.2s ease;
     }
 
         #getBooksButton:hover {
-            background-color: #3700b3;
+            background-color: #3d5aaf;
+            transform: scale(1.05);
         }
 
     table {
-        width: 80%;
-        margin: 20px auto;
+        width: 90%;
+        margin: 30px auto;
         border-collapse: collapse;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        box-shadow: 0 6px 10px rgba(0, 0, 0, 0.1);
         background-color: #fff;
+        border-radius: 8px;
+        overflow: hidden;
     }
 
         table thead {
-            background-color: #6200ea;
+            background-color: #4e73df;
             color: #fff;
+            text-transform: uppercase;
         }
 
         table th, table td {
-            padding: 10px;
+            padding: 15px;
             text-align: center;
             border: 1px solid #ddd;
+            font-size: 1em;
         }
 
         table tr:nth-child(even) {
-            background-color: #f9f9f9;
+            background-color: #e4e9f6;
         }
 
         table tr:hover {
-            background-color: #f1f1f1;
+            background-color: #c6d1f4;
+            transition: background-color 0.3s ease;
         }
 </style>
 
-<h1>Welcome to the Library Management System</h1>
 
-<button id="getBooksButton">Get Books</button>
+<header>
+    <h1>Library Management System</h1>
+    <p>Your gateway to knowledge and discovery</p>
+</header>
+
+<button id="getBooksButton">View Available Books</button>
 
 <table id="booksTable" style="display:none;">
     <thead>
         <tr>
-            <th>BookID</th>
+            <th>Book ID</th>
             <th>Title</th>
             <th>ISBN</th>
             <th>Publication Date</th>
-            <th>Stock Quantity</th>
-            <th>CategoryID</th>
+            <th>Stock</th>
+            <th>Category</th>
         </tr>
     </thead>
     <tbody>
