@@ -2,59 +2,83 @@
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Dapper;
+using Microsoft.Data.SqlClient;
 
 namespace Libraria.Controllers
 {
     public class AccountController : Controller
     {
+        private readonly string _connectionString;
+
+        public AccountController(IConfiguration configuration)
+        {
+            _connectionString = configuration.GetConnectionString("DefaultConnection");
+        }
+
         // GET: Account/Login
         public IActionResult Login()
         {
+            if (User.Identity.IsAuthenticated)
+            {
+                return RedirectToAction("Index", "Home");
+            }
             return View();
         }
 
         // POST: Account/Login
         [HttpPost]
-        public async Task<IActionResult> Login(string username, string password)
+        public async Task<IActionResult> Login(string email, string password)
         {
-            // Örnek kullanıcı doğrulaması (gerçek uygulamalarda veritabanı kullanmalısınız)
-            if (username == "admin" && password == "admin123")
+            using (var connection = new SqlConnection(_connectionString))
             {
-                var claims = new List<Claim>
+                // Check in AdminTable
+                var adminUser = await connection.QueryFirstOrDefaultAsync<User>(
+                    "SELECT Email FROM AdminTable WHERE Email = @Email AND Password = @Password",
+                    new { Email = email, Password = password });
+
+                if (adminUser != null)
                 {
-                    new Claim(ClaimTypes.Name, username),
-                    new Claim(ClaimTypes.Role, "Admin")
-                };
+                    var claims = new List<Claim>
+                    {
+                        new Claim(ClaimTypes.Name, adminUser.Email),
+                        new Claim(ClaimTypes.Role, "Admin")
+                    };
 
-                var claimsIdentity = new ClaimsIdentity(
-                    claims, CookieAuthenticationDefaults.AuthenticationScheme);
+                    var claimsIdentity = new ClaimsIdentity(
+                        claims, CookieAuthenticationDefaults.AuthenticationScheme);
 
-                await HttpContext.SignInAsync(
-                    CookieAuthenticationDefaults.AuthenticationScheme,
-                    new ClaimsPrincipal(claimsIdentity));
+                    await HttpContext.SignInAsync(
+                        CookieAuthenticationDefaults.AuthenticationScheme,
+                        new ClaimsPrincipal(claimsIdentity));
 
-                return RedirectToAction("Index", "Home");
-            }
-            else if (username == "user" && password == "user123")
-            {
-                var claims = new List<Claim>
+                    return RedirectToAction("Index", "Home");
+                }
+
+                // Check in UserTable
+                var user = await connection.QueryFirstOrDefaultAsync<User>(
+                    "SELECT Email FROM UserTable WHERE Email = @Email AND Password = @Password",
+                    new { Email = email, Password = password });
+
+                if (user != null)
                 {
-                    new Claim(ClaimTypes.Name, username),
-                    new Claim(ClaimTypes.Role, "User")
-                };
+                    var claims = new List<Claim>
+                    {
+                        new Claim(ClaimTypes.Name, user.Email),
+                        new Claim(ClaimTypes.Role, "User")
+                    };
 
-                var claimsIdentity = new ClaimsIdentity(
-                    claims, CookieAuthenticationDefaults.AuthenticationScheme);
+                    var claimsIdentity = new ClaimsIdentity(
+                        claims, CookieAuthenticationDefaults.AuthenticationScheme);
 
-                await HttpContext.SignInAsync(
-                    CookieAuthenticationDefaults.AuthenticationScheme,
-                    new ClaimsPrincipal(claimsIdentity));
+                    await HttpContext.SignInAsync(
+                        CookieAuthenticationDefaults.AuthenticationScheme,
+                        new ClaimsPrincipal(claimsIdentity));
 
-                return RedirectToAction("Index", "Home");
-            }
-            else
-            {
-                ViewBag.Message = "Geçersiz kullanıcı adı veya şifre.";
+                    return RedirectToAction("Index", "Home");
+                }
+
+                ViewBag.Message = "Invalid email or password.";
                 return View();
             }
         }
@@ -73,5 +97,10 @@ namespace Libraria.Controllers
         {
             return View();
         }
+    }
+
+    public class User
+    {
+        public string Email { get; set; }
     }
 }
