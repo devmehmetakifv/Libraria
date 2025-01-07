@@ -19,6 +19,7 @@ builder.Services.AddAuthorization();
 builder.Services.AddTransient<IDbConnection>(sp =>
     new SqlConnection(builder.Configuration.GetConnectionString("DefaultConnection")));
 builder.Services.AddHttpContextAccessor();
+builder.Services.AddHttpClient();
 
 var app = builder.Build();
 

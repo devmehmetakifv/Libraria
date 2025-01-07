@@ -2,7 +2,111 @@
     ViewData["Title"] = "Home Page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f4f4f9;
+        color: #333;
+    }
+
+    h1 {
+        text-align: center;
+        padding: 20px;
+        background-color: #6200ea;
+        color: #fff;
+        margin: 0;
+    }
+
+    #getBooksButton {
+        display: block;
+        margin: 20px auto;
+        padding: 10px 20px;
+        font-size: 16px;
+        color: #fff;
+        background-color: #6200ea;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+        #getBooksButton:hover {
+            background-color: #3700b3;
+        }
+
+    table {
+        width: 80%;
+        margin: 20px auto;
+        border-collapse: collapse;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        background-color: #fff;
+    }
+
+        table thead {
+            background-color: #6200ea;
+            color: #fff;
+        }
+
+        table th, table td {
+            padding: 10px;
+            text-align: center;
+            border: 1px solid #ddd;
+        }
+
+        table tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        table tr:hover {
+            background-color: #f1f1f1;
+        }
+</style>
+
+<h1>Welcome to the Library Management System</h1>
+
+<button id="getBooksButton">Get Books</button>
+
+<table id="booksTable" style="display:none;">
+    <thead>
+        <tr>
+            <th>BookID</th>
+            <th>Title</th>
+            <th>ISBN</th>
+            <th>Publication Date</th>
+            <th>Stock Quantity</th>
+            <th>CategoryID</th>
+        </tr>
+    </thead>
+    <tbody>
+    </tbody>
+</table>
+
+@section Scripts {
+    <script>
+        document.getElementById('getBooksButton').addEventListener('click', function () {
+            fetch('/Home/GetBooks')
+                .then(response => response.json())
+                .then(data => {
+                    const table = document.getElementById('booksTable');
+                    const tbody = table.querySelector('tbody');
+                    tbody.innerHTML = '';
+
+                    data.forEach(book => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${book.BookID}</td>
+                            <td>${book.Title}</td>
+                            <td>${book.ISBN}</td>
+                            <td>${new Date(book.PublicationDate).toLocaleDateString()}</td>
+                            <td>${book.StockQuantity}</td>
+                            <td>${book.CategoryID}</td>
+                        `;
+                        tbody.appendChild(row);
+                    });
+
+                    table.style.display = 'table';
+                });
+        });
+    </script>
+}
