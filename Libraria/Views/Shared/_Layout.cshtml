@@ -10,7 +10,7 @@
     if (claimsPrincipal == null || !claimsPrincipal.Identity.IsAuthenticated)
     {
         <script>
-            window.location.href = "/Identity/Account/Login";
+            window.location.href = "/Account/Login";
         </script>
     }
     else
@@ -22,7 +22,7 @@
         if (string.IsNullOrEmpty(userId) && string.IsNullOrEmpty(userEmail))
         {
             <script>
-                window.location.href = "/Identity/Account/Login";
+                window.location.href = "/Account/Login";
             </script>
         }
 
@@ -67,7 +67,7 @@
 
     <!-- Page Wrapper -->
     <div id="wrapper">
-        @* <!--  @await Html.PartialAsync("PanelShared/General/SidebarPartials/_AdminSidebar", user); --> *@
+        @await Html.PartialAsync("PanelShared/General/SidebarPartials/_AdminSidebar", user);
         @* @switch (user.RoleId)
         {
             case 1:
