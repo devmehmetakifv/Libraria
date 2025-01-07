@@ -9,7 +9,7 @@
 @* @using StudentInformationSystem.Business.Abstract
 @using StudentInformationSystem.Entity.Concrete *@
 
-@inject SignInManager<User> SignInManager
+@* @inject SignInManager<User> SignInManager
 @inject UserManager<User> UserManager
 @{
     if (!SignInManager.IsSignedIn(User))
@@ -19,7 +19,7 @@
         </script>
     }
     var user = await UserManager.GetUserAsync(User);
-}
+} *@
 
 <!DOCTYPE html>
 <html lang="en">
