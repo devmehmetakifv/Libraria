@@ -84,40 +84,62 @@ $(document).ready(function () {
         });
     });
 });
-// AJAX to fetch departments
+// AJAX to fetch categories
 $(document).ready(function () {
     $.ajax({
         type: 'POST',
-        url: '/Panel/GetDepartments',
+        url: '/Panel/GetCategories',
         success: function (response) {
+            console.log(response)
             if (response.success) {
-                departments = response.data;
+                categories = response.data;
             }
             else {
                 alert(response.message);
             }
         },
         error: function () {
-            alert('Error fetching departments.');
+            alert('Error fetching categories.');
         }
     });
 });
 
-// AJAX to fetch programs
+// AJAX to fetch genres
 $(document).ready(function () {
     $.ajax({
         type: 'POST',
-        url: '/Panel/GetPrograms',
+        url: '/Panel/GetGenres',
         success: function (response) {
+            console.log(response)
             if (response.success) {
-                programs = response.data;
+                genres = response.data;
             }
             else {
                 alert(response.message);
             }
         },
         error: function () {
-            alert('Error fetching departments.');
+            alert('Error fetching genres.');
+        }
+    });
+});
+
+// AJAX to fetch authors
+$(document).ready(function () {
+    $.ajax({
+        type: 'POST',
+        url: '/Panel/GetAuthors',
+        success: function (response) {
+            console.log(response)
+            if (response.success) {
+                authors = response.data;
+            }
+            else {
+                alert(response.message);
+            }
+        },
+        error: function () {
+            alert('Error fetching authors.');
         }
     });
 });

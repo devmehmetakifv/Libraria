@@ -255,5 +255,55 @@ namespace Libraria.Controllers
                 }
             }
         }
+        public async Task<IActionResult> GetCategories()
+        {
+            using (var connection = new SqlConnection(_connectionString))
+            {
+                await connection.OpenAsync();
+                var categories = await connection.QueryAsync<Category>("SELECT CategoryID, CategoryName FROM Category");
+                if (categories != null)
+                {
+                    return Json(new { success = true, data = categories });
+                }
+                else
+                {
+                    return Json(new { success = false, data = "Categories not found!" });
+                }
+            }
+        }
+        public async Task<IActionResult> GetGenres()
+        {
+            using (var connection = new SqlConnection(_connectionString))
+            {
+                await connection.OpenAsync();
+                var genres = await connection.QueryAsync<Genre>("SELECT GenreID, GenreName FROM Genre");
+
+                if (genres != null)
+                {
+                    return Json(new { success = true, data = genres });
+                }
+                else
+                {
+                    return Json(new { success = false, data = "Genres not found!" });
+                }
+            }
+        }
+        public async Task<IActionResult> GetAuthors()
+        {
+            using (var connection = new SqlConnection(_connectionString))
+            {
+                await connection.OpenAsync();
+                var authors = await connection.QueryAsync<Author>("SELECT AuthorID, FirstName, LastName, BirthDate FROM Author");
+
+                if (authors != null)
+                {
+                    return Json(new { success = true, data = authors });
+                }
+                else
+                {
+                    return Json(new { success = false, data = "Authors not found!" });
+                }
+            }
+        }
     }
 }

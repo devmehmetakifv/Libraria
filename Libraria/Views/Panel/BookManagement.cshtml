@@ -9,6 +9,9 @@
         @successMessage
     </div>
 }
+@{
+    var categories = Model.Categories.ToList();
+}
 <nav>
     <div class="nav nav-tabs" id="nav-tab" role="tablist">
         <button class="nav-link active" id="nav-home-tab" data-bs-toggle="tab" data-bs-target="#nav-home" type="button" role="tab" aria-controls="nav-home" aria-selected="true">New Book...</button>
@@ -51,7 +54,7 @@
                                             <div class="form-floating mb-3">
                                                 <select class="form-control custom-select text-dark" name="departmentName" aria-required="true">
                                                     <option value="" selected disabled hidden>Department</option>
-@*                                                     @foreach (var department in Model.Departments)
+                                                    @*                                                     @foreach (var department in Model.Departments)
                                                     {
                                                         <option value="@department.Name">@department.Name</option>
                                                     } *@
@@ -129,17 +132,17 @@
                                                     <input class="form-control form-control-user" id="fillStockQuantity" name="bookStockQuantity" autocomplete="bookstockquantity" aria-required="true" placeholder="Book Stock Quantity" required />
                                                 </div>
                                             </div>
-@*                                             <div class="col-sm-6" id="fillDepartmentNameDiv">
+                                            <div class="col-sm-6" id="fillDepartmentNameDiv">
                                                 <div class="form-floating mb-3">
                                                     <select class="form-control custom-select text-dark" id="fillDepartmentName" name="departmentName" aria-required="true">
-                                                        <option value="" selected disabled hidden>Department</option>
-                                                         @foreach (var department in Model.Departments)
+                                                        <option value="" selected disabled hidden>Category</option>
+                                                        @foreach (var category in Model.Categories)
                                                         {
-                                                            <option value="@department.Name">@department.Name</option>
+                                                            <option value="@category.CategoryName">@category.CategoryName</option>
                                                         }
                                                     </select>
                                                 </div>
-                                            </div> *@
+                                            </div>
                                             <div class="col-sm-12">
                                                 <div class="form-floating mb-3">
                                                     <button id="registerSubmit" type="submit" class="btn btn-primary btn-user btn-block">Save</button>
@@ -180,20 +183,20 @@
                             {
                                 <tr>
                                     <form method="post">
-                                    <th>
-                                        <button type="button"
-                                                class="btn delete-book-btn"
-                                                data-book-id="@book.">
-                                            <i class="fa fa-ban p-0 m-0" aria-hidden="true"></i>
-                                        </button>
-                                    </th>
+                                        <th>
+                                            <button type="button"
+                                            class="btn delete-book-btn"
+                                            data-book-id="@book.">
+                                                <i class="fa fa-ban p-0 m-0" aria-hidden="true"></i>
+                                            </button>
+                                        </th>
                                     </form>
                                     <td>@book.BookID</td>
                                     <td>@book.Title</td>
                                     <td>@book.ISBN</td>
                                     <td>@book.PublicationDate</td>
                                     <td>@book.StockQuantity</td>
-                                    @* <td>@book.StockQuantity</td> *@
+                                    <td>@book.CategoryID</td>
                                 </tr>
                             }
                         </tbody>
