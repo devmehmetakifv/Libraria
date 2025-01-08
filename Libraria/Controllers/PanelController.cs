@@ -8,7 +8,6 @@ using Dapper;
 
 namespace Libraria.Controllers
 {
-    [Authorize]
     public class PanelController : Controller
     {
         private readonly string _connectionString = "Server=.\\sqlexpress;Database=LibraryManagementDatabase;Trusted_Connection=True;TrustServerCertificate=True;";
@@ -31,7 +30,6 @@ namespace Libraria.Controllers
             return View(new ErrorViewModel { RequestId = System.Diagnostics.Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
 
-        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> UserManagement()
         {
             using (var connection = new SqlConnection(_connectionString))
@@ -51,7 +49,6 @@ namespace Libraria.Controllers
             }
         }
 
-        [Authorize(Roles = "Admin")]
         [HttpPost]
         public async Task<IActionResult> AddNewAdmin(string name, string surname, string email, string password, int branchId)
         {
@@ -75,7 +72,6 @@ namespace Libraria.Controllers
             }
         }
 
-        [Authorize(Roles = "Admin")]
         [HttpPost]
         public async Task<IActionResult> AddNewUser(string name, string surname, string email, string password)
         {
@@ -99,7 +95,6 @@ namespace Libraria.Controllers
             }
         }
 
-        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> BringUser(string name, string surname)
         {
             using (var connection = new SqlConnection(_connectionString))
@@ -118,7 +113,6 @@ namespace Libraria.Controllers
             }
         }
 
-        [Authorize(Roles = "Admin")]
         [HttpPost]
         public async Task<IActionResult> EditUser(int userId, string name, string surname, string email)
         {
@@ -141,7 +135,6 @@ namespace Libraria.Controllers
             }
         }
 
-        [Authorize(Roles = "Admin")]
         [HttpPost]
         public async Task<IActionResult> DeleteUser(int deleteUserId)
         {
@@ -163,7 +156,6 @@ namespace Libraria.Controllers
             }
         }
 
-        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> BookManagement()
         {
             using (var connection = new SqlConnection(_connectionString))
@@ -181,7 +173,6 @@ namespace Libraria.Controllers
             }
         }
 
-        [Authorize(Roles = "Admin")]
         [HttpPost]
         public async Task<IActionResult> AddNewBook(string title, string isbn, DateOnly publicationDate, int stockQuantity, int categoryId)
         {
@@ -204,7 +195,6 @@ namespace Libraria.Controllers
             }
         }
 
-        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> BringBook(string bookTitle)
         {
             using (var connection = new SqlConnection(_connectionString))
@@ -223,7 +213,6 @@ namespace Libraria.Controllers
             }
         }
 
-        [Authorize(Roles = "Admin")]
         [HttpPost]
         public async Task<IActionResult> EditBook(int bookId, string title, string isbn, DateOnly publicationDate, int stockQuantity, int categoryId)
         {
@@ -246,7 +235,6 @@ namespace Libraria.Controllers
             }
         }
 
-        [Authorize(Roles = "Admin")]
         [HttpPost]
         public async Task<IActionResult> DeleteBook(int deleteBookId)
         {
@@ -267,19 +255,5 @@ namespace Libraria.Controllers
                 }
             }
         }
-    }
-
-    // --- View Models ---
-    public class AdminUserBranchViewModel
-    {
-        public List<User> Users { get; set; }
-        public List<Admin> Admins { get; set; }
-        public List<LibraryBranch> Branches { get; set; }
-    }
-
-    public class BookCategoryViewModel
-    {
-        public List<Book> Books { get; set; }
-        public List<Category> Categories { get; set; }
     }
 }
