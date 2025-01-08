@@ -15,11 +15,9 @@
     }
     else
     {
-        // Retrieve the user identifier (e.g., UserId or Email) from the claims
-        var userId = claimsPrincipal.Claims.FirstOrDefault(c => c.Type == "UserId")?.Value;
-        var userEmail = claimsPrincipal.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
+        var userEmail = claimsPrincipal.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value;
 
-        if (string.IsNullOrEmpty(userId) && string.IsNullOrEmpty(userEmail))
+        if (string.IsNullOrEmpty(userEmail))
         {
             <script>
                 window.location.href = "/Account/Login";
@@ -27,13 +25,13 @@
         }
 
         // Query the database using Dapper
-        var query = "SELECT * FROM UserTable WHERE UserID = @UserId OR Email = @Email";
-        user = DbConnection.QueryFirstOrDefault<User>(query, new { UserId = userId, Email = userEmail });
+        var query = "SELECT * FROM AdminTable WHERE Email = @Email";
+        user = DbConnection.QueryFirstOrDefault<User>(query, new { Email = userEmail });
 
         if (user == null)
         {
             <script>
-                window.location.href = "/Identity/Account/Login";
+                window.location.href = "/Account/Login";
             </script>
         }
     }
