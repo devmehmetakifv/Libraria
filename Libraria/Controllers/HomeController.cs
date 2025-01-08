@@ -44,9 +44,27 @@ namespace Libraria.Controllers
         {
             using (var connection = new SqlConnection(_configuration.GetConnectionString("DefaultConnection")))
             {
-                var books = await connection.QueryAsync("SELECT * FROM Book");
+                var sql = @"
+            SELECT 
+                b.BookID,
+                b.Title,
+                b.ISBN,
+                b.PublicationDate,
+                b.StockQuantity,
+                b.CategoryID,
+                MAX(r.ReservationDate) AS ReservationDate
+            FROM 
+                Book b
+            LEFT JOIN 
+                Reservation r ON b.BookID = r.BookID
+            GROUP BY 
+                b.BookID, b.Title, b.ISBN, b.PublicationDate, b.StockQuantity, b.CategoryID
+        ";
+
+                var books = await connection.QueryAsync<dynamic>(sql);
                 return Json(books);
             }
         }
+
     }
 }

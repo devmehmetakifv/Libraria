@@ -103,8 +103,10 @@
             <th>Publication Date</th>
             <th>Stock</th>
             <th>Category</th>
+            <th>Reservation</th>
         </tr>
     </thead>
+
     <tbody>
     </tbody>
 </table>
@@ -119,18 +121,20 @@
                     const tbody = table.querySelector('tbody');
                     tbody.innerHTML = '';
 
-                    data.forEach(book => {
-                        const row = document.createElement('tr');
-                        row.innerHTML = `
-                            <td>${book.BookID}</td>
-                            <td>${book.Title}</td>
-                            <td>${book.ISBN}</td>
-                            <td>${new Date(book.PublicationDate).toLocaleDateString()}</td>
-                            <td>${book.StockQuantity}</td>
-                            <td>${book.CategoryID}</td>
-                        `;
-                        tbody.appendChild(row);
-                    });
+                            data.forEach(book => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${book.BookID}</td>
+                <td>${book.Title}</td>
+                <td>${book.ISBN}</td>
+                <td>${new Date(book.PublicationDate).toLocaleDateString()}</td>
+                <td>${book.StockQuantity}</td>
+                <td>${book.CategoryID}</td>
+                <td>${book.ReservationDate ? new Date(book.ReservationDate).toLocaleDateString() : 'Available'}</td>
+            `;
+            tbody.appendChild(row);
+        });
+
 
                     table.style.display = 'table';
                 });
