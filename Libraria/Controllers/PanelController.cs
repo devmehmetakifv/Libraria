@@ -35,7 +35,7 @@ namespace Libraria.Controllers
             using (var connection = new SqlConnection(_connectionString))
             {
                 await connection.OpenAsync();
-                var users = await connection.QueryAsync<User>("SELECT UserID, Name, Surname, Email, MembershipDate, Role FROM UserTable");
+                var users = await connection.QueryAsync<Libraria.Models.User>("SELECT UserID, Name, Surname, Email, MembershipDate, Role FROM UserTable");
                 var admins = await connection.QueryAsync<Admin>("SELECT AdminID, Name, Surname, Email, Role, BranchID FROM AdminTable");
                 var branches = await connection.QueryAsync<LibraryBranch>("SELECT BranchID, BranchName FROM LibraryBranch");
 
@@ -214,13 +214,13 @@ namespace Libraria.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> EditBook(int bookId, string title, string isbn, DateOnly publicationDate, int stockQuantity, int categoryId)
+        public async Task<IActionResult> EditBook(int bookId, string bookTitle, string bookISBN, DateTime bookPublicationDate, int bookStockQuantity/*, int categoryId*/)
         {
             using (var connection = new SqlConnection(_connectionString))
             {
                 await connection.OpenAsync();
-                var parameters = new { BookID = bookId, Title = title, ISBN = isbn, PublicationDate = publicationDate, StockQuantity = stockQuantity, CategoryID = categoryId };
-                int rowsAffected = await connection.ExecuteAsync("UPDATE Book SET Title = @Title, ISBN = @ISBN, PublicationDate = @PublicationDate, StockQuantity = @StockQuantity, CategoryID = @CategoryID WHERE BookID = @BookID", parameters);
+                var parameters = new { BookID = bookId, Title = bookTitle, ISBN = bookISBN, PublicationDate = bookPublicationDate, StockQuantity = bookStockQuantity/*, CategoryID = categoryId*/ };
+                int rowsAffected = await connection.ExecuteAsync("UPDATE Book SET Title = @Title, ISBN = @ISBN, PublicationDate = @PublicationDate, StockQuantity = @StockQuantity WHERE BookID = @BookID", parameters); //CategoryID = @CategoryID
 
                 if (rowsAffected > 0)
                 {

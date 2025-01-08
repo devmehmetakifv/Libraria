@@ -123,108 +123,37 @@ $(document).ready(function () {
 });
 
 $(document).ready(function () {
-    $('#bringCourseForm').on('submit', function (e) {
+    $('#bringBookForm').on('submit', function (e) {
         e.preventDefault();
 
         var formData = {
-            courseName: $('#inputCourseName').val(),
+            bookTitle: $('#inputBookTitle').val(),
         };
-
+        console.log(formData)
         $.ajax({
             type: 'POST',
-            url: '/Panel/BringCourse',
+            url: '/Panel/BringBook',
             data: formData,
             success: function (response) {
                 if (response.success) {
-                    $('#bringCoursePanel').hide();
+                    console.log(response.data)
+                    $('#bringBookPanel').hide();
 
-                    var departmentName = departments.find(d => d.id === response.data.departmentID)?.name;
-                    $('#fillCourseId').val(response.data.id);
-                    $('#edit-title').text(response.data.name);
+                    $('#fillBookId').val(response.data.bookID);
+                    $('#edit-title').text(response.data.title);
 
-                    $('#fillCourseName').val(response.data.name);
-                    $('#fillCourseDescription').val(response.data.description);
-                    $('#fillCredits').val(response.data.credit);
-                    $('#fillDepartmentName').val(departmentName);
+                    $('#fillBookTitle').val(response.data.title);
+                    $('#fillBookISBN').val(response.data.isbn);
+                    $('#fillPublicationDate').val(response.data.publicationDate);
+                    $('#fillStockQuantity').val(response.data.stockQuantity);
 
-                    $('#courseDetails').show();
+                    $('#bookDetails').show();
                 } else {
                     alert(response.message);
                 }
             },
             error: function () {
-                alert('Error fetching course.');
-            }
-        });
-    });
-});
-
-$(document).ready(function () {
-    $('#bringProgramForm').on('submit', function (e) {
-        e.preventDefault();
-
-        var formData = {
-            programName: $('#inputProgramName').val(),
-        };
-
-        $.ajax({
-            type: 'POST',
-            url: '/Panel/BringProgram',
-            data: formData,
-            success: function (response) {
-                if (response.success) {
-                    $('#bringProgramPanel').hide();
-
-                    var departmentName = departments.find(d => d.id === response.data.departmentID)?.name;
-                    $('#fillProgramId').val(response.data.id);
-                    $('#edit-title').text(response.data.name);
-
-                    $('#fillProgramName').val(response.data.name);
-                    $('#fillProgramDescription').val(response.data.description);
-                    $('#fillDurationInYears').val(response.data.durationInYears);
-                    $('#fillDepartmentName').val(departmentName);
-
-                    $('#programDetails').show();
-                } else {
-                    alert(response.message);
-                }
-            },
-            error: function () {
-                alert('Error fetching program.');
-            }
-        });
-    });
-});
-
-$(document).ready(function () {
-    $('#bringDepartmentForm').on('submit', function (e) {
-        e.preventDefault();
-
-        var formData = {
-            departmentName: $('#inputDepartmentName').val(),
-        };
-
-        $.ajax({
-            type: 'POST',
-            url: '/Panel/BringDepartment',
-            data: formData,
-            success: function (response) {
-                if (response.success) {
-                    $('#bringDepartmentPanel').hide();
-
-                    $('#fillDepartmentId').val(response.data.id);
-                    $('#edit-title').text(response.data.name);
-
-                    $('#fillDepartmentName').val(response.data.name);
-                    $('#fillDepartmentDescription').val(response.data.description);
-
-                    $('#departmentDetails').show();
-                } else {
-                    alert(response.message);
-                }
-            },
-            error: function () {
-                alert('Error fetching department.');
+                alert('Error fetching book.');
             }
         });
     });

@@ -84,7 +84,7 @@
                     <div class="form-group row">
                         <div class="col-sm-12 mb-3 mb-sm-0">
                             <div class="form-floating mb-3">
-                                <input class="form-control form-control-user" autocomplete="bookName" id="inputBookName" name="bookName" aria-required="true" placeholder="Book Name" />
+                                <input class="form-control form-control-user" autocomplete="bookTitle" id="inputBookTitle" name="bookTitle" aria-required="true" placeholder="Book Title" />
                             </div>
                         </div>
                         <div class="col-sm-12">
@@ -109,32 +109,37 @@
                                     <form id="editBookForm" method="POST" action="/Panel/EditBook" class="user">
                                         <div class="form-group row">
                                             <input class="form-control form-control-user" id="fillBookId" name="bookId" autocomplete="bookid" hidden />
-                                            <div class="col-sm-6 mb-3 mb-sm-0" id="fillBookNameDiv">
+                                            <div class="col-sm-6 mb-3 mb-sm-0" id="fillBookTitleDiv">
                                                 <div class="form-floating mb-3">
-                                                    <input class="form-control form-control-user" id="fillBookName" name="name" autocomplete="bookname" aria-required="true" placeholder="Book Name" required />
+                                                    <input class="form-control form-control-user" id="fillBookTitle" name="bookTitle" autocomplete="booktitle" aria-required="true" placeholder="Book Title" required />
                                                 </div>
                                             </div>
-                                            <div class="col-sm-6" id="fillBookDescriptionDiv">
+                                            <div class="col-sm-6" id="fillBookISBNDiv">
                                                 <div class="form-floating mb-3">
-                                                    <input class="form-control form-control-user" id="fillBookDescription" name="description" autocomplete="bookdescription" aria-required="true" placeholder="Book Description" required />
+                                                    <input class="form-control form-control-user" id="fillBookISBN" name="bookISBN" autocomplete="bookisbn" aria-required="true" placeholder="Book ISBN" required />
                                                 </div>
                                             </div>
-                                            <div class="col-sm-6" id="fillCreditsDiv">
+                                            <div class="col-sm-6" id="fillPublicationDateDiv">
                                                 <div class="form-floating mb-3">
-                                                    <input class="form-control form-control-user" id="fillCredits" name="credits" autocomplete="credits" aria-required="true" placeholder="Credits" required />
+                                                    <input class="form-control form-control-user" id="fillPublicationDate" name="bookPublicationDate" autocomplete="bookpublicationdate" aria-required="true" placeholder="Book Publication Date" required />
                                                 </div>
                                             </div>
-                                            <div class="col-sm-6" id="fillDepartmentNameDiv">
+                                            <div class="col-sm-6" id="fillStockQuantityDiv">
+                                                <div class="form-floating mb-3">
+                                                    <input class="form-control form-control-user" id="fillStockQuantity" name="bookStockQuantity" autocomplete="bookstockquantity" aria-required="true" placeholder="Book Stock Quantity" required />
+                                                </div>
+                                            </div>
+@*                                             <div class="col-sm-6" id="fillDepartmentNameDiv">
                                                 <div class="form-floating mb-3">
                                                     <select class="form-control custom-select text-dark" id="fillDepartmentName" name="departmentName" aria-required="true">
                                                         <option value="" selected disabled hidden>Department</option>
-@*                                                         @foreach (var department in Model.Departments)
+                                                         @foreach (var department in Model.Departments)
                                                         {
                                                             <option value="@department.Name">@department.Name</option>
-                                                        } *@
+                                                        }
                                                     </select>
                                                 </div>
-                                            </div>
+                                            </div> *@
                                             <div class="col-sm-12">
                                                 <div class="form-floating mb-3">
                                                     <button id="registerSubmit" type="submit" class="btn btn-primary btn-user btn-block">Save</button>
@@ -162,32 +167,17 @@
                         <thead>
                             <tr>
                                 <th>Delete</th>
-                                <th>Name</th>
-                                <th>Description</th>
-                                <th>Credits</th>
-                                <th>Department</th>
+                                <th>Book ID</th>
+                                <th>Title</th>
+                                <th>ISBN</th>
+                                <th>Publication Date</th>
+                                <th>Stock Quantity</th>
+                                <th>Category</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <form method="post">
-                                <th>
-                                    <button type="button"
-                                            class="btn delete-book-btn"
-                                            data-book-id="@* @book.ID *@">
-                                        <i class="fa fa-ban p-0 m-0" aria-hidden="true"></i>
-                                    </button>
-                                </th>
-                                </form>
-                                <td>@* @book.Name *@ Book Name</td>
-                                <td>@* @book.Description *@ Description</td>
-                                <td>@* @book.Credit *@ Credit</td>
-                                <td>@* @department.Name *@ Department Name</td>
-                            </tr>
                             @foreach (var book in Model.Books)
                             {
-                                Department department = new Department();
-                                department = await IDepartmentService.GetByIdAsync(book.DepartmentID);
                                 <tr>
                                     <form method="post">
                                     <th>
@@ -198,20 +188,24 @@
                                         </button>
                                     </th>
                                     </form>
-                                    <td>@book.Name</td>
-                                    <td>@book.Description</td>
-                                    <td>@book.Credit</td>
-                                    <td>@department.Name</td>
+                                    <td>@book.BookID</td>
+                                    <td>@book.Title</td>
+                                    <td>@book.ISBN</td>
+                                    <td>@book.PublicationDate</td>
+                                    <td>@book.StockQuantity</td>
+                                    @* <td>@book.StockQuantity</td> *@
                                 </tr>
                             }
                         </tbody>
                         <tfoot>
                             <tr>
                                 <th>Delete</th>
-                                <th>Name</th>
-                                <th>Description</th>
-                                <th>Credits</th>
-                                <th>Department</th>
+                                <th>Book ID</th>
+                                <th>Title</th>
+                                <th>ISBN</th>
+                                <th>Publication Date</th>
+                                <th>Stock Quantity</th>
+                                <th>Category</th>
                             </tr>
                         </tfoot>
                     </table>
