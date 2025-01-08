@@ -1,4 +1,6 @@
-﻿@*
+﻿@inject Microsoft.AspNetCore.Antiforgery.IAntiforgery Antiforgery
+
+@*
     For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 *@
 @{
@@ -121,23 +123,57 @@
                     const tbody = table.querySelector('tbody');
                     tbody.innerHTML = '';
 
-                            data.forEach(book => {
-            const row = document.createElement('tr');
-            row.innerHTML = `
-                <td>${book.BookID}</td>
-                <td>${book.Title}</td>
-                <td>${book.ISBN}</td>
-                <td>${new Date(book.PublicationDate).toLocaleDateString()}</td>
-                <td>${book.StockQuantity}</td>
-                <td>${book.CategoryID}</td>
-                <td>${book.ReservationDate ? new Date(book.ReservationDate).toLocaleDateString() : 'Available'}</td>
-            `;
-            tbody.appendChild(row);
-        });
+                    data.forEach(book => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${book.BookID}</td>
+                            <td>${book.Title}</td>
+                            <td>${book.ISBN}</td>
+                            <td>${new Date(book.PublicationDate).toLocaleDateString()}</td>
+                            <td>${book.StockQuantity}</td>
+                            <td>${book.CategoryID}</td>
+                            <td>
+                                ${book.ReservationDate
+                                    ? `<span class="reservation" data-bookid="${book.BookID}">${new Date(book.ReservationDate).toLocaleDateString()}</span>`
+                                    : `<a href="#" class="reserve-link" data-bookid="${book.BookID}">Reserve</a>`}
+                            </td>
+                        `;
+                        tbody.appendChild(row);
+                    });
 
+                    // Add event listeners for reservation links
+                    document.querySelectorAll('.reserve-link').forEach(element => {
+                        element.addEventListener('click', function (e) {
+                            e.preventDefault();
+                            const bookId = this.getAttribute('data-bookid');
+                            reserveBook(bookId);
+                        });
+                    });
 
                     table.style.display = 'table';
                 });
         });
+
+        function reserveBook(bookId) {
+            fetch('/Home/ReserveBook', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'RequestVerificationToken': '@Antiforgery.GetAndStoreTokens(Context).RequestToken'
+                },
+                body: JSON.stringify({ bookId: bookId })
+            })
+            .then(response => {
+                if (response.ok) {
+                    alert('Book reserved successfully.');
+                    // Optionally refresh the book list
+                    document.getElementById('getBooksButton').click();
+                } else if (response.status === 401) {
+                    alert('You must be logged in to reserve a book.');
+                } else {
+                    alert('Failed to reserve the book.');
+                }
+            });
+        }
     </script>
 }

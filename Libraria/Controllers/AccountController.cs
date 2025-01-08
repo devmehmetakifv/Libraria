@@ -34,7 +34,7 @@ namespace Libraria.Controllers
             {
                 // Check in AdminTable
                 var adminUser = await connection.QueryFirstOrDefaultAsync<User>(
-                    "SELECT Email FROM AdminTable WHERE Email = @Email AND Password = @Password",
+                    "SELECT AdminID, Email FROM AdminTable WHERE Email = @Email AND Password = @Password",
                     new { Email = email, Password = password });
 
                 if (adminUser != null)
@@ -42,7 +42,8 @@ namespace Libraria.Controllers
                     var claims = new List<Claim>
                     {
                         new Claim(ClaimTypes.Name, adminUser.Email),
-                        new Claim(ClaimTypes.Role, "Admin")
+                        new Claim(ClaimTypes.Role, "Admin"),
+                        new Claim(ClaimTypes.NameIdentifier, adminUser.UserID.ToString())
                     };
 
                     var claimsIdentity = new ClaimsIdentity(
@@ -57,7 +58,7 @@ namespace Libraria.Controllers
 
                 // Check in UserTable
                 var user = await connection.QueryFirstOrDefaultAsync<User>(
-                    "SELECT Email FROM UserTable WHERE Email = @Email AND Password = @Password",
+                    "SELECT UserID, Email FROM UserTable WHERE Email = @Email AND Password = @Password",
                     new { Email = email, Password = password });
 
                 if (user != null)
@@ -65,7 +66,8 @@ namespace Libraria.Controllers
                     var claims = new List<Claim>
                     {
                         new Claim(ClaimTypes.Name, user.Email),
-                        new Claim(ClaimTypes.Role, "User")
+                        new Claim(ClaimTypes.Role, "User"),
+                        new Claim(ClaimTypes.NameIdentifier, user.UserID.ToString())
                     };
 
                     var claimsIdentity = new ClaimsIdentity(
@@ -98,9 +100,10 @@ namespace Libraria.Controllers
             return View();
         }
     }
-
-    public class User
-    {
-        public string Email { get; set; }
-    }
 }
+    public class User
+{
+    public int UserID { get; set; } 
+    public string Email { get; set; }
+}
+
