@@ -1,0 +1,88 @@
+﻿@model IEnumerable<Libraria.Models.ReservationViewModel>
+
+@{
+    Layout = "~/Views/Shared/_indexLayout.cshtml";
+}
+
+<style>
+    h2 {
+        color: #4e73df;
+        margin-bottom: 30px;
+        font-family: 'Arial', sans-serif;
+        font-weight: bold;
+    }
+
+    .table {
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        border-radius: 10px;
+        overflow: hidden;
+    }
+
+        .table thead th {
+            background-color: #4e73df;
+            color: #ffffff;
+            text-transform: uppercase;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .table tbody tr {
+            transition: background-color 0.2s ease-in-out;
+        }
+
+            .table tbody tr:hover {
+                background-color: #f8f9fc;
+            }
+
+    .btn-cancel {
+        background-color: #e74a3b;
+        color: #ffffff;
+        border: none;
+        padding: 8px 12px;
+        border-radius: 5px;
+        font-weight: 500;
+        transition: background-color 0.3s ease-in-out;
+    }
+
+        .btn-cancel:hover {
+            background-color: #c0392b;
+        }
+
+    .container {
+        max-width: 800px;
+        margin: auto;
+        background-color: #ffffff;
+        border-radius: 10px;
+        padding: 20px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+</style>
+
+<div class="container mt-5">
+    <h2 class="text-center">Your Reservations</h2>
+
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Book Title</th>
+                <th>Reservation Date</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var reservation in Model)
+            {
+                <tr>
+                    <td>@reservation.Title</td>
+                    <td>@reservation.ReservationDate.ToString("yyyy-MM-dd")</td>
+                    <td>
+                        <form asp-action="CancelReservation" method="post" class="d-inline">
+                            <input type="hidden" name="reservationId" value="@reservation.ReservationID" />
+                            <button type="submit" class="btn btn-cancel" onclick="return confirm('Are you sure you want to cancel this reservation?');">Cancel Reservation</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

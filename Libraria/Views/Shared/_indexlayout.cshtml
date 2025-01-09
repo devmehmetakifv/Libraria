@@ -6,6 +6,7 @@
 
 @{
     string userRole = null;
+    string userEmail = null;
 }
 
 @{
@@ -18,8 +19,8 @@
     }
     else
     {
-        // Kullanıcı bilgilerini al
-        var userEmail = claimsPrincipal.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value;
+        // Get user information
+        userEmail = claimsPrincipal.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value;
 
         if (string.IsNullOrEmpty(userEmail))
         {
@@ -28,7 +29,7 @@
             </script>
         }
 
-        // Kullanıcının rolünü belirle
+        // Determine user role
         var query = @"
             SELECT Role
             FROM (
@@ -71,6 +72,16 @@
 
         <!-- Topbar Navbar -->
         <ul class="navbar-nav ml-auto">
+            <li class="nav-item">
+                <a class="nav-link" href="/">
+                    <i class="fas fa-home fa-lg fa-fw mr-2 text-gray-400"></i> Home
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/Home/ManageReservations">
+                    <i class="fas fa-book fa-lg fa-fw mr-2 text-gray-400"></i> Manage Reservations
+                </a>
+            </li>
             @if (userRole == "Admin")
             {
                 <li class="nav-item">
@@ -82,7 +93,8 @@
             <li class="nav-item dropdown no-arrow">
                 <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    <span class="mr-2 d-none d-lg-inline text-gray-600 small">@userRole Mehmet Akif VARDAR</span>
+                    <span class="mr-2 d-none d-lg-inline text-gray-600 small">@userRole @userEmail</span>
+
                     <img class="img-profile rounded-circle" src="~/img/undraw_profile.svg">
                 </a>
             </li>

@@ -9,6 +9,7 @@ using Libraria.Models;
 using Microsoft.Data.SqlClient;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
+using Libraria.Models;
 
 namespace Libraria.Controllers
 {
@@ -113,13 +114,89 @@ namespace Libraria.Controllers
 
             return Ok();
         }
+        [HttpGet]
+        [Authorize(Roles = "User,Admin")]
+        public async Task<IActionResult> ManageReservations()
+        {
+            // Get the current user's ID
+            var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier);
+            if (userIdClaim == null)
+            {
+                return Unauthorized();
+            }
 
-        // Removed GetBranchIdForUser method since it's no longer needed
+            var userId = int.Parse(userIdClaim.Value);
 
+            using (var connection = new SqlConnection(_configuration.GetConnectionString("DefaultConnection")))
+            {
+                var sql = @"
+                    SELECT 
+                        r.ReservationID,    -- Added ReservationID
+                        b.Title,
+                        r.ReservationDate
+                    FROM 
+                        Reservation r
+                    INNER JOIN 
+                        Book b ON r.BookID = b.BookID
+                    WHERE 
+                        r.UserID = @UserID
+                    ORDER BY 
+                        r.ReservationDate DESC
+                ";
+
+                var reservations = await connection.QueryAsync<ReservationViewModel>(sql, new { UserID = userId });
+                return View(reservations);
+            }
+        }
+
+        [HttpPost]
+        [Authorize(Roles = "User,Admin")]
+        public async Task<IActionResult> CancelReservation(int reservationId)
+        {
+            if (reservationId <= 0)
+            {
+                return BadRequest();
+            }
+
+            // Get the current user's ID
+            var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier);
+            if (userIdClaim == null)
+            {
+                return Unauthorized();
+            }
+
+            var userId = int.Parse(userIdClaim.Value);
+
+            using (var connection = new SqlConnection(_configuration.GetConnectionString("DefaultConnection")))
+            {
+                var sql = @"
+                    DELETE FROM Reservation
+                    WHERE ReservationID = @ReservationID AND UserID = @UserID
+                ";
+
+                try
+                {
+                    var rowsAffected = await connection.ExecuteAsync(sql, new { ReservationID = reservationId, UserID = userId });
+                    if (rowsAffected == 0)
+                    {
+                        return NotFound();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Error while cancelling reservation.");
+                    return StatusCode(500, "Internal server error");
+                }
+            }
+
+            return RedirectToAction("ManageReservations");
+        }
     }
 
     public class ReserveBookModel
     {
         public int BookId { get; set; }
     }
+
+  
 }
