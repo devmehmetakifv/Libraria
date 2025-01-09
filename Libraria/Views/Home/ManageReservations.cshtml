@@ -1,4 +1,4 @@
-﻿@model IEnumerable<Libraria.Models.ReservationViewModel>
+﻿@model Libraria.Models.ManageReservationsAndLoansViewModel
 
 @{
     Layout = "~/Views/Shared/_indexLayout.cshtml";
@@ -60,7 +60,6 @@
 
 <div class="container mt-5">
     <h2 class="text-center">Your Reservations</h2>
-
     <table class="table table-striped">
         <thead>
             <tr>
@@ -70,7 +69,7 @@
             </tr>
         </thead>
         <tbody>
-            @foreach (var reservation in Model)
+            @foreach (var reservation in Model.Reservations)
             {
                 <tr>
                     <td>@reservation.Title</td>
@@ -80,6 +79,55 @@
                             <input type="hidden" name="reservationId" value="@reservation.ReservationID" />
                             <button type="submit" class="btn btn-cancel" onclick="return confirm('Are you sure you want to cancel this reservation?');">Cancel Reservation</button>
                         </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+
+<!-- Loans Section -->
+<div class="container mt-5">
+    <h2 class="text-center">Your Loans</h2>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Book Title</th>
+                <th>Borrow Date</th>
+                <th>Return Date</th>
+                <th>Fine Amount</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var loan in Model.Loans)
+            {
+                <tr>
+                    <td>@loan.Title</td>
+                    <td>@loan.BorrowDate.ToString("yyyy-MM-dd")</td>
+                    <td>
+                        @if (loan.ReturnDate.HasValue)
+                        {
+                            @loan.ReturnDate.Value.ToString("yyyy-MM-dd")
+                        }
+                        else
+                        {
+                            <em>Not Returned</em>
+                        }
+                    </td>
+                    <td>
+                        @if (loan.FineAmount.HasValue)
+                        {
+                            @loan.FineAmount.Value.ToString("C")
+                        }
+                        else
+                        {
+                            <em>No Fine</em>
+                        }
+                    </td>
+                    <td>
+                        <!-- Add any actions if necessary -->
                     </td>
                 </tr>
             }

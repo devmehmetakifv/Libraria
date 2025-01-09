@@ -1,11 +1,11 @@
 ﻿namespace Libraria.Models
 {
-    public class ReservationViewModel
+    public class LoanViewModel
     {
-        public int ReservationID { get; set; }
+        public int LoanID { get; set; }
         public string Title { get; set; }
-        public DateTime ReservationDate { get; set; }
         public DateTime BorrowDate { get; set; }
         public DateTime? ReturnDate { get; set; } 
+        public decimal? FineAmount { get; set; } 
     }
 }

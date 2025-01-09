@@ -181,25 +181,57 @@ namespace Libraria.Controllers
 
             using (var connection = new SqlConnection(_configuration.GetConnectionString("DefaultConnection")))
             {
-                var sql = @"
-                    SELECT 
-                        r.ReservationID,    -- Added ReservationID
-                        b.Title,
-                        r.ReservationDate
-                    FROM 
-                        Reservation r
-                    INNER JOIN 
-                        Book b ON r.BookID = b.BookID
-                    WHERE 
-                        r.UserID = @UserID
-                    ORDER BY 
-                        r.ReservationDate DESC
-                ";
+                // Retrieve Reservations
+                var reservationsSql = @"
+            SELECT 
+                r.ReservationID,
+                b.Title,
+                r.ReservationDate
+            FROM 
+                Reservation r
+            INNER JOIN 
+                Book b ON r.BookID = b.BookID
+            WHERE 
+                r.UserID = @UserID
+            ORDER BY 
+                r.ReservationDate DESC
+        ";
 
-                var reservations = await connection.QueryAsync<ReservationViewModel>(sql, new { UserID = userId });
-                return View(reservations);
+                var reservations = await connection.QueryAsync<ReservationViewModel>(reservationsSql, new { UserID = userId });
+
+                // Retrieve Loans with FineAmount
+                var loansSql = @"
+            SELECT 
+                l.LoanID,
+                b.Title,
+                l.BorrowDate,
+                l.ReturnDate,
+                f.FineAmount
+            FROM 
+                Loan l
+            INNER JOIN 
+                Book b ON l.BookID = b.BookID
+            LEFT JOIN 
+                Fine f ON l.LoanID = f.LoanID
+            WHERE 
+                l.UserID = @UserID
+            ORDER BY 
+                l.BorrowDate DESC
+        ";
+
+                var loans = await connection.QueryAsync<LoanViewModel>(loansSql, new { UserID = userId });
+
+                // Create the composite ViewModel
+                var viewModel = new ManageReservationsAndLoansViewModel
+                {
+                    Reservations = reservations,
+                    Loans = loans
+                };
+
+                return View(viewModel);
             }
         }
+
 
         [HttpPost]
         [Authorize(Roles = "User,Admin")]
