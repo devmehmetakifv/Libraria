@@ -54,19 +54,22 @@ namespace Libraria.Controllers
                 b.ISBN,
                 b.PublicationDate,
                 b.StockQuantity,
-                b.CategoryID,
+                c.CategoryName, -- Get CategoryName from Category table
                 ISNULL(r.CurrentReservations, 0) AS CurrentReservations
             FROM 
                 Book b
             LEFT JOIN 
                 (SELECT BookID, COUNT(*) AS CurrentReservations FROM Reservation GROUP BY BookID) r 
                 ON b.BookID = r.BookID
+            LEFT JOIN
+                Category c ON b.CategoryID = c.CategoryID
         ";
 
                 var books = await connection.QueryAsync<dynamic>(sql);
                 return Json(books);
             }
         }
+
 
 
         [HttpPost]

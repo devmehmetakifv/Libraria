@@ -157,7 +157,7 @@
                             <td>${book.ISBN}</td>
                             <td>${new Date(book.PublicationDate).toLocaleDateString()}</td>
                             <td>${book.StockQuantity}</td>
-                            <td>${book.CategoryID}</td>
+                            <td>${book.CategoryName}</td>
                             <td>
                                 ${availableCopies > 0
                                     ? `<a href="#" class="reserve-link" data-bookid="${book.BookID}">Reserve</a> (${availableCopies} available)`
@@ -178,7 +178,7 @@
                         });
                     });
 
-                   // Add event listeners for reservation links
+                    // Add event listeners for reservation links
                     document.querySelectorAll('.reserve-link').forEach(element => {
                         element.addEventListener('click', function (e) {
                             e.preventDefault();
