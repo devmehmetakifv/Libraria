@@ -37,24 +37,6 @@
             font-style: italic;
         }
 
-    #getBooksButton {
-        display: block;
-        margin: 20px auto;
-        padding: 12px 25px;
-        font-size: 18px;
-        color: #fff;
-        background-color: #5a8dee;
-        border: none;
-        border-radius: 6px;
-        cursor: pointer;
-        transition: background-color 0.3s ease, transform 0.2s ease;
-    }
-
-        #getBooksButton:hover {
-            background-color: #3d5aaf;
-            transform: scale(1.05);
-        }
-
     #filterInput {
         display: block;
         margin: 20px auto;
@@ -117,7 +99,6 @@
     <p>Your gateway to knowledge and discovery</p>
 </header>
 
-<button id="getBooksButton">View Available Books</button>
 <input type="text" id="filterInput" placeholder="Filter books by title..." style="display:none;">
 
 <table id="booksTable" style="display:none;">
@@ -138,7 +119,7 @@
 
 @section Scripts {
     <script>
-        document.getElementById('getBooksButton').addEventListener('click', function () {
+        document.addEventListener('DOMContentLoaded', function () {
             fetch('/Home/GetBooks')
                 .then(response => response.json())
                 .then(data => {
@@ -203,7 +184,7 @@
             .then(response => {
                 if (response.ok) {
                     alert('Book reserved successfully.');
-                    document.getElementById('getBooksButton').click();
+                    location.reload();
                 } else if (response.status === 400) {
                     response.text().then(msg => alert(msg));
                 } else if (response.status === 401) {
