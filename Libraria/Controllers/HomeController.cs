@@ -54,8 +54,9 @@ namespace Libraria.Controllers
                 b.ISBN,
                 b.PublicationDate,
                 b.StockQuantity,
-                c.CategoryName, -- Get CategoryName from Category table
-                ISNULL(r.CurrentReservations, 0) AS CurrentReservations
+                c.CategoryName,
+                ISNULL(r.CurrentReservations, 0) AS CurrentReservations,
+                ISNULL(a.AuthorNames, 'N/A') AS AuthorNames
             FROM 
                 Book b
             LEFT JOIN 
@@ -63,12 +64,27 @@ namespace Libraria.Controllers
                 ON b.BookID = r.BookID
             LEFT JOIN
                 Category c ON b.CategoryID = c.CategoryID
+            LEFT JOIN
+                (
+                    SELECT 
+                        ba.BookID, 
+                        STRING_AGG(au.FirstName + ' ' + au.LastName, ', ') AS AuthorNames
+                    FROM 
+                        BookAuthor ba
+                    INNER JOIN 
+                        Author au ON ba.AuthorID = au.AuthorID
+                    GROUP BY 
+                        ba.BookID
+                ) a ON b.BookID = a.BookID
         ";
 
                 var books = await connection.QueryAsync<dynamic>(sql);
                 return Json(books);
             }
         }
+
+
+
 
 
 
