@@ -48,25 +48,26 @@ namespace Libraria.Controllers
             using (var connection = new SqlConnection(_configuration.GetConnectionString("DefaultConnection")))
             {
                 var sql = @"
-                    SELECT 
-                        b.BookID,
-                        b.Title,
-                        b.ISBN,
-                        b.PublicationDate,
-                        b.StockQuantity,
-                        b.CategoryID,
-                        r.ReservationDate
-                    FROM 
-                        Book b
-                    LEFT JOIN 
-                        (SELECT BookID, MAX(ReservationDate) AS ReservationDate FROM Reservation GROUP BY BookID) r 
-                        ON b.BookID = r.BookID
-                ";
+            SELECT 
+                b.BookID,
+                b.Title,
+                b.ISBN,
+                b.PublicationDate,
+                b.StockQuantity,
+                b.CategoryID,
+                ISNULL(r.CurrentReservations, 0) AS CurrentReservations
+            FROM 
+                Book b
+            LEFT JOIN 
+                (SELECT BookID, COUNT(*) AS CurrentReservations FROM Reservation GROUP BY BookID) r 
+                ON b.BookID = r.BookID
+        ";
 
                 var books = await connection.QueryAsync<dynamic>(sql);
                 return Json(books);
             }
         }
+
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -89,6 +90,37 @@ namespace Libraria.Controllers
 
             using (var connection = new SqlConnection(_configuration.GetConnectionString("DefaultConnection")))
             {
+                // Check current reservations and stock quantity
+                var checkSql = @"
+                    SELECT 
+                        b.StockQuantity,
+                        COUNT(r.ReservationID) AS CurrentReservations
+                    FROM 
+                        Book b
+                    LEFT JOIN 
+                        Reservation r ON b.BookID = r.BookID
+                    WHERE 
+                        b.BookID = @BookID
+                    GROUP BY 
+                        b.StockQuantity
+                ";
+
+                var result = await connection.QueryFirstOrDefaultAsync<dynamic>(checkSql, new { BookID = model.BookId });
+
+                if (result == null)
+                {
+                    return NotFound("Book not found.");
+                }
+
+                int stockQuantity = result.StockQuantity;
+                int currentReservations = result.CurrentReservations;
+
+                if (currentReservations >= stockQuantity)
+                {
+                    return BadRequest("No more copies available for reservation.");
+                }
+
+                // Proceed with reservation
                 var sql = @"
                     INSERT INTO Reservation (UserID, BookID, ReservationDate)
                     VALUES (@UserID, @BookID, @ReservationDate)
@@ -114,6 +146,7 @@ namespace Libraria.Controllers
 
             return Ok();
         }
+
         [HttpGet]
         [Authorize(Roles = "User,Admin")]
         public async Task<IActionResult> ManageReservations()

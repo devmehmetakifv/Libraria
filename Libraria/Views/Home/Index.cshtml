@@ -66,6 +66,19 @@
         box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     }
 
+    .text-muted {
+        color: #6c757d;
+    }
+
+    .reserve-link {
+        color: #007bff;
+        text-decoration: none;
+    }
+
+        .reserve-link:hover {
+            text-decoration: underline;
+        }
+
     table {
         width: 90%;
         margin: 30px auto;
@@ -135,6 +148,8 @@
                     tbody.innerHTML = '';
 
                     data.forEach(book => {
+                        const availableCopies = book.StockQuantity - book.CurrentReservations;
+
                         const row = document.createElement('tr');
                         row.innerHTML = `
                             <td>${book.BookID}</td>
@@ -144,9 +159,9 @@
                             <td>${book.StockQuantity}</td>
                             <td>${book.CategoryID}</td>
                             <td>
-                                ${book.ReservationDate
-                                    ? `<span class="reservation" data-bookid="${book.BookID}">${new Date(book.ReservationDate).toLocaleDateString()}</span>`
-                                    : `<a href="#" class="reserve-link" data-bookid="${book.BookID}">Reserve</a>`}
+                                ${availableCopies > 0
+                                    ? `<a href="#" class="reserve-link" data-bookid="${book.BookID}">Reserve</a> (${availableCopies} available)`
+                                    : `<span class="text-muted">Out of Stock</span>`}
                             </td>
                         `;
                         tbody.appendChild(row);
@@ -163,7 +178,7 @@
                         });
                     });
 
-                    // Add event listeners for reservation links
+                   // Add event listeners for reservation links
                     document.querySelectorAll('.reserve-link').forEach(element => {
                         element.addEventListener('click', function (e) {
                             e.preventDefault();
@@ -189,6 +204,8 @@
                 if (response.ok) {
                     alert('Book reserved successfully.');
                     document.getElementById('getBooksButton').click();
+                } else if (response.status === 400) {
+                    response.text().then(msg => alert(msg));
                 } else if (response.status === 401) {
                     alert('You must be logged in to reserve a book.');
                 } else {
