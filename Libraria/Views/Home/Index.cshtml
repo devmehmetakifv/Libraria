@@ -110,13 +110,15 @@
             <th>Publication Date</th>
             <th>Stock</th>
             <th>Category</th>
-            <th>Author</th> 
+            <th>Genre</th> 
+            <th>Author</th>
             <th>Reservation</th>
         </tr>
     </thead>
     <tbody>
     </tbody>
 </table>
+
 
 @section Scripts {
     <script>
@@ -140,7 +142,8 @@
                             <td>${new Date(book.PublicationDate).toLocaleDateString()}</td>
                             <td>${book.StockQuantity}</td>
                             <td>${book.CategoryName}</td>
-                            <td>${book.AuthorNames}</td> <!-- Display author names -->
+                            <td>${book.GenreNames}</td> <!-- Display genre names -->
+                            <td>${book.AuthorNames}</td>
                             <td>
                                 ${availableCopies > 0
                                     ? `<a href="#" class="reserve-link" data-bookid="${book.BookID}">Reserve</a> (${availableCopies} available)`
@@ -198,4 +201,3 @@
         }
     </script>
 }
-

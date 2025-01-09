@@ -56,7 +56,8 @@ namespace Libraria.Controllers
                 b.StockQuantity,
                 c.CategoryName,
                 ISNULL(r.CurrentReservations, 0) AS CurrentReservations,
-                ISNULL(a.AuthorNames, 'N/A') AS AuthorNames
+                ISNULL(a.AuthorNames, 'N/A') AS AuthorNames,
+                ISNULL(g.GenreNames, 'N/A') AS GenreNames
             FROM 
                 Book b
             LEFT JOIN 
@@ -76,17 +77,24 @@ namespace Libraria.Controllers
                     GROUP BY 
                         ba.BookID
                 ) a ON b.BookID = a.BookID
+            LEFT JOIN
+                (
+                    SELECT 
+                        bg.BookID, 
+                        STRING_AGG(g.GenreName, ', ') AS GenreNames
+                    FROM 
+                        BookGenre bg
+                    INNER JOIN 
+                        Genre g ON bg.GenreID = g.GenreID
+                    GROUP BY 
+                        bg.BookID
+                ) g ON b.BookID = g.BookID
         ";
 
                 var books = await connection.QueryAsync<dynamic>(sql);
                 return Json(books);
             }
         }
-
-
-
-
-
 
         [HttpPost]
         [ValidateAntiForgeryToken]
