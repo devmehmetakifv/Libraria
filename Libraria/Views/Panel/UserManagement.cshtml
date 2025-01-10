@@ -151,7 +151,7 @@
                                                                 <select class="form-control custom-select text-dark" name="departmentName" aria-required="true">
                                                                     <option value="" selected disabled hidden>Department</option>
                                                                     <option value="@* @department.Name *@ departmentName">@* @department.Name *@ departmentName</option>
-@*                                                                     @foreach (var department in Model.Departments)
+                                                                    @*                                                                     @foreach (var department in Model.Departments)
                                                                     {
                                                                         <option value="@department.Name">@department.Name</option>
                                                                     } *@
@@ -274,7 +274,7 @@
                                                     <select class="form-control custom-select text-dark" id="fillDepartmentName" name="departmentName" aria-required="true">
                                                         <option value="" selected disabled hidden>Department</option>
                                                         <option value="@* @department.Name *@ departmentName">@* @department.Name *@ departmentName</option>
-@*                                                         @foreach (var department in Model.Departments)
+                                                        @*                                                         @foreach (var department in Model.Departments)
                                                         {
                                                             <option value="@department.Name">@department.Name</option>
                                                         } *@
@@ -286,7 +286,7 @@
                                                     <select class="form-control custom-select text-dark" id="fillProgramName" name="programName" aria-required="true">
                                                         <option value="" selected disabled hidden>Program</option>
                                                         <option value="@* @program.Name *@ programName">@* @program.Name *@ programName</option>
-@*                                                         @foreach (var program in Model.Programs)
+                                                        @*                                                         @foreach (var program in Model.Programs)
                                                         {
                                                             <option value="@program.Name">@program.Name</option>
                                                         } *@
@@ -330,6 +330,10 @@
             </div>
         </div>
     </div>
+    @{
+        var users = new List<User>();
+        var admins = new List<Admin>();
+    }
     <div class="tab-pane fade px-2" id="nav-contact" role="tabpanel" aria-labelledby="nav-contact-tab">
         <div class="tab-pane fade show active px-2" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
             <div class="row">
@@ -365,7 +369,7 @@
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                @foreach (var student in students)
+                                                @foreach (var user in users)
                                                 {
                                                     @* Program studentProgram = new Program();
                                                     if (student.ProgramID.HasValue)
