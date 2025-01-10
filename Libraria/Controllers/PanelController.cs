@@ -50,8 +50,13 @@ namespace Libraria.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddNewAdmin(string name, string surname, string email, string password, int branchId)
+        public async Task<IActionResult> AddNewAdmin(string name, string surname, string email, string password, string confirmPassword, int branchId)
         {
+            if (password != confirmPassword)
+            {
+                TempData["ErrorMessage"] = "Passwords do not match!";
+                return RedirectToAction("UserManagement");
+            }
             using (var connection = new SqlConnection(_connectionString))
             {
                 await connection.OpenAsync();
@@ -73,13 +78,18 @@ namespace Libraria.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddNewUser(string name, string surname, string email, string password)
+        public async Task<IActionResult> AddNewUser(string name, string surname, string email, string password, string confirmPassword)
         {
+            if (password != confirmPassword)
+            {
+                TempData["ErrorMessage"] = "Passwords do not match!";
+                return RedirectToAction("UserManagement");
+            }
             using (var connection = new SqlConnection(_connectionString))
             {
                 await connection.OpenAsync();
 
-                var parameters = new { Name = name, Surname = surname, Email = email, MembershipDate = DateOnly.FromDateTime(DateTime.Now), Password = password, Role = "User" };
+                var parameters = new { Name = name, Surname = surname, Email = email, MembershipDate = DateTime.Now, Password = password, Role = "User" };
                 int rowsAffected = await connection.ExecuteAsync("INSERT INTO UserTable (Name, Surname, Email, MembershipDate, Password, Role) VALUES (@Name, @Surname, @Email, @MembershipDate, @Password, @Role)", parameters);
 
                 if (rowsAffected > 0)
@@ -95,12 +105,12 @@ namespace Libraria.Controllers
             }
         }
 
-        public async Task<IActionResult> BringUser(string name, string surname)
+        public async Task<IActionResult> BringUser(string email)
         {
             using (var connection = new SqlConnection(_connectionString))
             {
                 await connection.OpenAsync();
-                var user = await connection.QueryFirstOrDefaultAsync<User>("SELECT UserID, Name, Surname, Email FROM UserTable WHERE Name = @Name AND Surname = @Surname", new { Name = name, Surname = surname });
+                var user = await connection.QueryFirstOrDefaultAsync<User>("SELECT UserID, Name, Surname, Email FROM UserTable WHERE Email = @Email", new { Email = email });
 
                 if (user != null)
                 {
@@ -151,6 +161,26 @@ namespace Libraria.Controllers
                 else
                 {
                     TempData["ErrorMessage"] = "User could not be deleted or user not found!";
+                    return RedirectToAction("UserManagement");
+                }
+            }
+        }
+        [HttpPost]
+        public async Task<IActionResult> DeleteAdmin(int deleteAdminId)
+        {
+            using (var connection = new SqlConnection(_connectionString))
+            {
+                await connection.OpenAsync();
+                int rowsAffected = await connection.ExecuteAsync("DELETE FROM AdminTable WHERE AdminID = @AdminID", new { AdminID = deleteAdminId });
+
+                if (rowsAffected > 0)
+                {
+                    TempData["SuccessMessage"] = "Admin deleted successfully!";
+                    return RedirectToAction("UserManagement");
+                }
+                else
+                {
+                    TempData["ErrorMessage"] = "Admin could not be deleted or user not found!";
                     return RedirectToAction("UserManagement");
                 }
             }
