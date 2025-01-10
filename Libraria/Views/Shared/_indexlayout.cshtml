@@ -22,13 +22,6 @@
         // Get user information
         userEmail = claimsPrincipal.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value;
 
-        if (string.IsNullOrEmpty(userEmail))
-        {
-            <script>
-                window.location.href = "/Account/Login";
-            </script>
-        }
-
         // Determine user role
         var query = @"
             SELECT Role
@@ -38,6 +31,22 @@
                 SELECT Role FROM AdminTable WHERE Email = @Email
             ) AS Roles";
         userRole = DbConnection.QueryFirstOrDefault<string>(query, new { Email = userEmail });
+
+        if (string.IsNullOrEmpty(userEmail))
+        {
+            <script>
+                window.location.href = "/Account/Login";
+            </script>
+        }
+
+        if(userRole == "Admin"){
+            <script>
+                window.location.href = "/Panel/UserManagement";
+            </script>
+        }
+        
+
+        
     }
 }
 
