@@ -21,7 +21,7 @@ $(document).ready(function () {
                 if (response.success) {
                     $('#bringUserPanel').hide();
 
-                    $('#fillUserId').val(response.data.id);
+                    $('#fillUserId').val(response.data.userID);
                     $('#edit-title').text("User " + response.data.name);
 
                     $('#fillUserEditName').val(response.data.name);
