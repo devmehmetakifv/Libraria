@@ -60,6 +60,35 @@
           rel="stylesheet">
     <link href="~/css/sb-admin-2.css" rel="stylesheet">
     <link href="~/css/sb-admin-2.min.css" rel="stylesheet">
+
+    <style>
+        .navbar-nav .nav-link {
+            color: #4e73df;
+            font-weight: 600;
+            transition: color 0.3s ease-in-out;
+        }
+
+            .navbar-nav .nav-link:hover {
+                color: #2e59d9;
+            }
+
+            .navbar-nav .nav-link i {
+                color: #4e73df;
+                transition: color 0.3s ease-in-out;
+            }
+
+            .navbar-nav .nav-link:hover i {
+                color: #2e59d9;
+            }
+
+            .navbar-nav .nav-link.active {
+                color: #2e59d9;
+            }
+
+                .navbar-nav .nav-link.active i {
+                    color: #2e59d9;
+                }
+    </style>
 </head>
 
 <body id="page-top">
@@ -74,27 +103,28 @@
         <ul class="navbar-nav ml-auto">
             <li class="nav-item">
                 <a class="nav-link" href="/">
-                    <i class="fas fa-home fa-lg fa-fw mr-2 text-gray-400"></i> Home
+                    <i class="fas fa-home fa-lg fa-fw mr-2"></i> Home
                 </a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" href="/Home/ManageReservations">
-                    <i class="fas fa-book fa-lg fa-fw mr-2 text-gray-400"></i> Manage Reservations
+                    <i class="fas fa-book fa-lg fa-fw mr-2"></i> Manage Reservations
                 </a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" href="/Home/OurBranches">
-                    <i class="fas fa-map-marker-alt fa-lg fa-fw mr-2 text-gray-400"></i> Our Branches
+                    <i class="fas fa-map-marker-alt fa-lg fa-fw mr-2"></i> Our Branches
                 </a>
             </li>
             @if (userRole == "Admin")
             {
                 <li class="nav-item">
                     <a class="nav-link" href="/Panel/UserManagement">
-                        <i class="fas fa-cogs fa-lg fa-fw mr-2 text-gray-400"></i> Panel
+                        <i class="fas fa-cogs fa-lg fa-fw mr-2"></i> Panel
                     </a>
                 </li>
             }
+            <div class="topbar-divider d-none d-sm-block"></div>
             <li class="nav-item dropdown no-arrow">
                 <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -107,7 +137,7 @@
             <li class="nav-item dropdown no-arrow mx-1">
                 <form id="logoutForm" class="form-inline" asp-action="Logout" asp-controller="Home">
                     <button id="logout" type="submit" class="nav-link btn btn-link text-dark border-0">
-                        <i class="fas fa-sign-out-alt fa-lg fa-fw mr-2 text-gray-400"></i> Logout
+                        <i class="fas fa-sign-out-alt fa-lg fa-fw mr-2"></i> Logout
                     </button>
                 </form>
             </li>
@@ -146,3 +176,4 @@
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
+
