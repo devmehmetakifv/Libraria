@@ -21,5 +21,15 @@ namespace Libraria.Controllers
                 return Ok(hasLoans > 0);
             }
         }
+        [HttpGet("IsUserHasLoan/{userId}")]
+        public async Task<IActionResult> IsUserHasLoan(int userId)
+        {
+            using (var connection = new SqlConnection(_connectionString))
+            {
+                const string query = "SELECT COUNT(1) FROM Loan WHERE UserID = @UserID";
+                var hasLoans = await connection.ExecuteScalarAsync<int>(query, new { UserID = userId });
+                return Ok(hasLoans > 0);
+            }
+        }
     }
 }

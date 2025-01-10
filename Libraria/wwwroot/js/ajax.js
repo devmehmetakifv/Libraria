@@ -9,8 +9,7 @@ $(document).ready(function () {
         e.preventDefault();
 
         var formData = {
-            firstName: $('#inputFirstName').val(),
-            lastName: $('#inputLastName').val()
+            email: $('#email').val(),
         };
 
         $.ajax({
@@ -18,65 +17,21 @@ $(document).ready(function () {
             url: '/Panel/BringUser',
             data: formData,
             success: function (response) {
+                console.log(response)
                 if (response.success) {
                     $('#bringUserPanel').hide();
 
-                    var departmentName = departments.find(d => d.id === response.data.departmentID)?.name;
-                    var programName = programs.find(p => p.id === response.data.programID)?.name;
                     $('#fillUserId').val(response.data.id);
+                    $('#edit-title').text("User " + response.data.name);
 
-                    switch (response.data.roleId) {
-                        case 1:
-                            $('#edit-title').text("Admin " + response.data.firstName);
+                    $('#fillUserEditName').val(response.data.name);
+                    $('#fillUserEditSurname').val(response.data.surname);
+                    $('#fillUserEditEmail').val(response.data.email);
 
-                            $('#fillHireDateDiv').remove();
-                            $('#fillDepartmentNameDiv').remove();
-                            $('#fillProgramNameDiv').remove();
-
-                            $('#fillFirstName').val(response.data.firstName);
-                            $('#fillLastName').val(response.data.lastName);
-                            $('#fillGender').val(response.data.gender);
-                            $('#fillContact').val(response.data.contact);
-                            $('#fillDateOfBirth').val(response.data.dateOfBirth);
-                            $('#fillPhoneNumber').val(response.data.phoneNumber);
-                            $('#fillEmail').val(response.data.email);
-                            break;
-                        case 2:
-                            $('#edit-title').text("Student " + response.data.firstName);
-
-                            $('#fillHireDateDiv').remove();
-                            $('#fillDepartmentNameDiv').remove();
-
-                            $('#fillFirstName').val(response.data.firstName);
-                            $('#fillLastName').val(response.data.lastName);
-                            $('#fillGender').val(response.data.gender);
-                            $('#fillContact').val(response.data.contact);
-                            $('#fillDateOfBirth').val(response.data.dateOfBirth);
-                            $('#fillPhoneNumber').val(response.data.phoneNumber);
-                            $('#fillEmail').val(response.data.email);
-                            $('#fillProgramName').val(programName);
-                            break;
-                        case 3:
-                            $('#edit-title').text("Instructor " + response.data.firstName);
-
-                            $('#fillProgramNameDiv').remove();
-
-                            $('#fillFirstName').val(response.data.firstName);
-                            $('#fillLastName').val(response.data.lastName);
-                            $('#fillGender').val(response.data.gender);
-                            $('#fillContact').val(response.data.contact);
-                            $('#fillDateOfBirth').val(response.data.dateOfBirth);
-                            $('#fillHireDate').val(response.data.hireDate);
-                            $('#fillPhoneNumber').val(response.data.phoneNumber);
-                            $('#fillEmail').val(response.data.email);
-                            $('#fillDepartmentName').val(departmentName);
-                            break;
-                        default:
-                    }
-                    $('#userDetails').show();
                 } else {
                     alert(response.message);
                 }
+                $('#userDetails').show();
             },
             error: function () {
                 alert('Error fetching user.');
@@ -84,6 +39,7 @@ $(document).ready(function () {
         });
     });
 });
+
 // AJAX to fetch categories
 $(document).ready(function () {
     $.ajax({
