@@ -1,5 +1,135 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+﻿@model IEnumerable<Libraria.Models.LoanManagementViewModel>
+
 @{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Loan Management";
 }
+
+<style>
+    h2 {
+        color: #4e73df;
+        margin-bottom: 30px;
+        font-family: 'Arial', sans-serif;
+        font-weight: bold;
+    }
+
+    .table-container {
+        max-width: 1200px;
+        margin: auto;
+        background-color: #ffffff;
+        border-radius: 10px;
+        padding: 20px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .table {
+        width: 100%;
+        margin-bottom: 0;
+        background-color: transparent;
+        border-collapse: collapse;
+    }
+
+        .table th, .table td {
+            padding: 12px;
+            text-align: center;
+            vertical-align: middle;
+            border-top: 1px solid #dee2e6;
+        }
+
+        .table thead th {
+            background-color: #4e73df;
+            color: #ffffff;
+            text-transform: uppercase;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .table tbody tr:hover {
+            background-color: #f8f9fc;
+        }
+
+    .btn-return {
+        background-color: #1cc88a;
+        color: #ffffff;
+        border: none;
+        padding: 8px 12px;
+        border-radius: 5px;
+        font-weight: 500;
+        transition: background-color 0.3s ease-in-out;
+    }
+
+        .btn-return:hover {
+            background-color: #17a673;
+        }
+</style>
+
+<div class="container mt-5">
+    <h2 class="text-center">Loan Management</h2>
+    <div class="table-container">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Loan ID</th>
+                    <th>User Email</th>
+                    <th>Book Title</th>
+                    <th>Borrow Date</th>
+                    <th>Return Date</th>
+                    <th>Branch</th>
+                    <th>Fine Amount</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var loan in Model)
+                {
+                    <tr>
+                        <td>@loan.LoanID</td>
+                        <td>@loan.UserEmail</td>
+                        <td>@loan.BookTitle</td>
+                        <td>@loan.BorrowDate.ToString("yyyy-MM-dd")</td>
+                        <td>
+                            @if (loan.ReturnDate.HasValue)
+                            {
+                                @loan.ReturnDate.Value.ToString("yyyy-MM-dd")
+                            }
+                            else
+                            {
+                                <em>Not Returned</em>
+                            }
+                        </td>
+                        <td>
+                            @if (!string.IsNullOrEmpty(loan.BranchName))
+                            {
+                                @loan.BranchName
+                            }
+                            else
+                            {
+                                <em>N/A</em>
+                            }
+                        </td>
+                        <td>
+                            @if (loan.FineAmount.HasValue)
+                            {
+                                @loan.FineAmount.Value.ToString("C")
+                            }
+                            else
+                            {
+                                <em>No Fine</em>
+                            }
+                        </td>
+                        <td>
+                            @if (!loan.ReturnDate.HasValue || loan.FineAmount.HasValue)
+                            {
+                                <form asp-action="MarkAsReturned" method="post" class="d-inline">
+                                    <input type="hidden" name="loanId" value="@loan.LoanID" />
+                                    <button type="submit" class="btn btn-return" onclick="return confirm('Mark this loan as returned?');">Mark as Returned</button>
+                                </form>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
