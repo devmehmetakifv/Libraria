@@ -115,9 +115,10 @@ $(document).ready(function () {
                     console.log(response.data)
                     var categoryName = categories.find(d => d.categoryID === response.data.categoryID)?.categoryName;
                     console.log(categoryName)
+                    console.log(response.data.bookID)
                     $('#bringBookPanel').hide();
 
-                    $('#fillBookId').val(response.data.bookID);
+                    $('#fillBookManagementId').val(response.data.bookID);
                     $('#edit-title').text(response.data.title);
 
                     $('#fillBookTitle').val(response.data.title);
