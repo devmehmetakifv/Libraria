@@ -111,6 +111,7 @@
             <th>Stock</th>
             <th>Category</th>
             <th>Genre</th> 
+            <th>Branch</th>
             <th>Author</th>
             <th>Reservation</th>
         </tr>
@@ -135,21 +136,23 @@
                         const availableCopies = book.StockQuantity - book.CurrentReservations;
 
                         const row = document.createElement('tr');
-                        row.innerHTML = `
-                            <td>${book.BookID}</td>
-                            <td>${book.Title}</td>
-                            <td>${book.ISBN}</td>
-                            <td>${new Date(book.PublicationDate).toLocaleDateString()}</td>
-                            <td>${book.StockQuantity}</td>
-                            <td>${book.CategoryName}</td>
-                            <td>${book.GenreNames}</td> <!-- Display genre names -->
-                            <td>${book.AuthorNames}</td>
-                            <td>
-                                ${availableCopies > 0
-                                    ? `<a href="#" class="reserve-link" data-bookid="${book.BookID}">Reserve</a> (${availableCopies} available)`
-                                    : `<span class="text-muted">Out of Stock</span>`}
-                            </td>
-                        `;
+                                row.innerHTML = `
+            <td>${book.BookID}</td>
+            <td>${book.Title}</td>
+            <td>${book.ISBN}</td>
+            <td>${new Date(book.PublicationDate).toLocaleDateString()}</td>
+            <td>${book.StockQuantity}</td>
+            <td>${book.CategoryName}</td>
+            <td>${book.GenreNames}</td>
+            <td>${book.BranchName}</td> <!-- Display BranchName -->
+            <td>${book.AuthorNames}</td>
+            <td>
+                ${availableCopies > 0
+                    ? `<a href="#" class="reserve-link" data-bookid="${book.BookID}">Reserve</a> (${availableCopies} available)`
+                    : `<span class="text-muted">Out of Stock</span>`}
+            </td>
+        `;
+
                         tbody.appendChild(row);
                     });
 

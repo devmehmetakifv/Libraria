@@ -57,7 +57,8 @@ namespace Libraria.Controllers
                 c.CategoryName,
                 ISNULL(r.CurrentReservations, 0) AS CurrentReservations,
                 ISNULL(a.AuthorNames, 'N/A') AS AuthorNames,
-                ISNULL(g.GenreNames, 'N/A') AS GenreNames
+                ISNULL(g.GenreNames, 'N/A') AS GenreNames,
+                lb.BranchName
             FROM 
                 Book b
             LEFT JOIN 
@@ -89,12 +90,15 @@ namespace Libraria.Controllers
                     GROUP BY 
                         bg.BookID
                 ) g ON b.BookID = g.BookID
+            LEFT JOIN
+                LibraryBranch lb ON b.BranchID = lb.BranchID
         ";
 
                 var books = await connection.QueryAsync<dynamic>(sql);
                 return Json(books);
             }
         }
+
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -189,16 +193,19 @@ namespace Libraria.Controllers
 
             using (var connection = new SqlConnection(_configuration.GetConnectionString("DefaultConnection")))
             {
-                // Retrieve Reservations
+                // Retrieve Reservations with BranchName
                 var reservationsSql = @"
             SELECT 
                 r.ReservationID,
                 b.Title,
-                r.ReservationDate
+                r.ReservationDate,
+                ISNULL(lb.BranchName, 'N/A') AS BranchName
             FROM 
                 Reservation r
             INNER JOIN 
                 Book b ON r.BookID = b.BookID
+            LEFT JOIN
+                LibraryBranch lb ON b.BranchID = lb.BranchID
             WHERE 
                 r.UserID = @UserID
             ORDER BY 
@@ -207,7 +214,7 @@ namespace Libraria.Controllers
 
                 var reservations = await connection.QueryAsync<ReservationViewModel>(reservationsSql, new { UserID = userId });
 
-                // Retrieve Loans with FineAmount
+                // Retrieve Loans with FineAmount (unchanged)
                 var loansSql = @"
             SELECT 
                 l.LoanID,
@@ -239,6 +246,9 @@ namespace Libraria.Controllers
                 return View(viewModel);
             }
         }
+
+
+
 
 
         [HttpPost]
@@ -283,6 +293,26 @@ namespace Libraria.Controllers
 
             return RedirectToAction("ManageReservations");
         }
+
+        [HttpGet]
+        public async Task<IActionResult> OurBranches()
+        {
+            using (var connection = new SqlConnection(_configuration.GetConnectionString("DefaultConnection")))
+            {
+                var sql = @"
+            SELECT 
+                BranchName,
+                Location
+            FROM 
+                LibraryBranch
+        ";
+
+                var branches = await connection.QueryAsync<dynamic>(sql);
+                return View(branches);
+            }
+        }
+
+
     }
 
     public class ReserveBookModel

@@ -57,7 +57,6 @@
         box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
     }
 </style>
-
 <div class="container mt-5">
     <h2 class="text-center">Your Reservations</h2>
     <table class="table table-striped">
@@ -65,6 +64,7 @@
             <tr>
                 <th>Book Title</th>
                 <th>Reservation Date</th>
+                <th>Branch</th> <!-- New column header -->
                 <th>Actions</th>
             </tr>
         </thead>
@@ -74,6 +74,7 @@
                 <tr>
                     <td>@reservation.Title</td>
                     <td>@reservation.ReservationDate.ToString("yyyy-MM-dd")</td>
+                    <td>@reservation.BranchName</td> <!-- Display BranchName -->
                     <td>
                         <form asp-action="CancelReservation" method="post" class="d-inline">
                             <input type="hidden" name="reservationId" value="@reservation.ReservationID" />

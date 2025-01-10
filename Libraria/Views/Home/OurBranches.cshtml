@@ -1,0 +1,85 @@
+﻿@model IEnumerable<dynamic>
+
+@{
+    Layout = "~/Views/Shared/_indexLayout.cshtml";
+    ViewData["Title"] = "Our Branches";
+}
+
+<style>
+    body {
+        font-family: 'Nunito', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background-color: #f0f4fc;
+        margin: 0;
+        padding: 0;
+        color: #2c3e50;
+    }
+
+    h2 {
+        text-align: center;
+        margin-top: 30px;
+        font-weight: 700;
+    }
+
+    .branches-table {
+        width: 85%;
+        margin: 40px auto;
+        border-collapse: collapse;
+        background-color: #ffffff;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+    }
+
+        .branches-table thead {
+            background-color: #4e73df;
+            color: #ffffff;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .branches-table th,
+        .branches-table td {
+            padding: 20px;
+            text-align: center;
+            border: none;
+            font-size: 1em;
+        }
+
+        .branches-table tbody tr {
+            border-bottom: 1px solid #dddddd;
+        }
+
+            .branches-table tbody tr:nth-of-type(even) {
+                background-color: #f3f5f9;
+            }
+
+            .branches-table tbody tr:last-of-type {
+                border-bottom: 2px solid #4e73df;
+            }
+
+            .branches-table tbody tr:hover {
+                background-color: #d1d8f0;
+                cursor: pointer;
+                transition: background-color 0.3s ease;
+            }
+</style>
+
+<h2>Our Branches</h2>
+
+<table class="branches-table">
+    <thead>
+        <tr>
+            <th>Branch Name</th>
+            <th>Location</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var branch in Model)
+        {
+            <tr>
+                <td>@branch.BranchName</td>
+                <td>@branch.Location</td>
+            </tr>
+        }
+    </tbody>
+</table>
