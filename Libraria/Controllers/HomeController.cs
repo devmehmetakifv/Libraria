@@ -47,58 +47,12 @@ namespace Libraria.Controllers
         {
             using (var connection = new SqlConnection(_configuration.GetConnectionString("DefaultConnection")))
             {
-                var sql = @"
-            SELECT 
-                b.BookID,
-                b.Title,
-                b.ISBN,
-                b.PublicationDate,
-                b.StockQuantity,
-                c.CategoryName,
-                ISNULL(r.CurrentReservations, 0) AS CurrentReservations,
-                ISNULL(a.AuthorNames, 'N/A') AS AuthorNames,
-                ISNULL(g.GenreNames, 'N/A') AS GenreNames,
-                lb.BranchName
-            FROM 
-                Book b
-            LEFT JOIN 
-                (SELECT BookID, COUNT(*) AS CurrentReservations FROM Reservation GROUP BY BookID) r 
-                ON b.BookID = r.BookID
-            LEFT JOIN
-                Category c ON b.CategoryID = c.CategoryID
-            LEFT JOIN
-                (
-                    SELECT 
-                        ba.BookID, 
-                        STRING_AGG(au.FirstName + ' ' + au.LastName, ', ') AS AuthorNames
-                    FROM 
-                        BookAuthor ba
-                    INNER JOIN 
-                        Author au ON ba.AuthorID = au.AuthorID
-                    GROUP BY 
-                        ba.BookID
-                ) a ON b.BookID = a.BookID
-            LEFT JOIN
-                (
-                    SELECT 
-                        bg.BookID, 
-                        STRING_AGG(g.GenreName, ', ') AS GenreNames
-                    FROM 
-                        BookGenre bg
-                    INNER JOIN 
-                        Genre g ON bg.GenreID = g.GenreID
-                    GROUP BY 
-                        bg.BookID
-                ) g ON b.BookID = g.BookID
-            LEFT JOIN
-                LibraryBranch lb ON b.BranchID = lb.BranchID
-        ";
+                var sql = "EXEC GetBooks";
 
                 var books = await connection.QueryAsync<dynamic>(sql);
                 return Json(books);
             }
         }
-
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -299,18 +253,13 @@ namespace Libraria.Controllers
         {
             using (var connection = new SqlConnection(_configuration.GetConnectionString("DefaultConnection")))
             {
-                var sql = @"
-            SELECT 
-                BranchName,
-                Location
-            FROM 
-                LibraryBranch
-        ";
+                var sql = "EXEC GetLibraryBranches";
 
                 var branches = await connection.QueryAsync<dynamic>(sql);
                 return View(branches);
             }
         }
+
 
 
     }

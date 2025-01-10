@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Libraria.Models;
 using Microsoft.Data.SqlClient;
+using System.Data;
 
 namespace Libraria.Controllers
 {
@@ -22,73 +23,14 @@ namespace Libraria.Controllers
         {
             using (var connection = new SqlConnection(_configuration.GetConnectionString("DefaultConnection")))
             {
-                // Combine the creation of the temporary table, the MERGE statement, and the DELETE statement into a single SQL batch
-                var updateFinesSql = @"
-                    -- Create a temporary table to store overdue loans
-                    CREATE TABLE #OverdueLoans (
-                        LoanID INT,
-                        OverdueDays INT
-                    );
-
-                    -- Insert overdue loans into the temporary table
-                    INSERT INTO #OverdueLoans (LoanID, OverdueDays)
-                    SELECT 
-                        l.LoanID,
-                        DATEDIFF(day, l.BorrowDate, ISNULL(l.ReturnDate, GETDATE())) - 15 AS OverdueDays
-                    FROM Loan l
-                    WHERE DATEDIFF(day, l.BorrowDate, ISNULL(l.ReturnDate, GETDATE())) > 15;
-
-                    -- Update fines for all overdue loans using the temporary table
-                    MERGE Fine AS target
-                    USING #OverdueLoans AS source
-                    ON target.LoanID = source.LoanID
-                    WHEN MATCHED THEN 
-                        UPDATE SET FineAmount = source.OverdueDays
-                    WHEN NOT MATCHED THEN
-                        INSERT (LoanID, FineAmount)
-                        VALUES (source.LoanID, source.OverdueDays);
-
-                    -- Delete fines for loans that are no longer overdue
-                    DELETE FROM Fine
-                    WHERE LoanID NOT IN (SELECT LoanID FROM #OverdueLoans);
-
-                    -- Drop the temporary table
-                    DROP TABLE #OverdueLoans;
-                ";
-
-                await connection.ExecuteAsync(updateFinesSql);
-
-                // Retrieve loan data along with fine amounts
-                var sql = @"
-                    SELECT 
-                        l.LoanID,
-                        l.UserID,
-                        u.Email AS UserEmail,
-                        l.BookID,
-                        b.Title AS BookTitle,
-                        l.BorrowDate,
-                        l.ReturnDate,
-                        l.BranchID,
-                        lb.BranchName,
-                        f.FineAmount
-                    FROM 
-                        Loan l
-                    INNER JOIN 
-                        UserTable u ON l.UserID = u.UserID
-                    INNER JOIN 
-                        Book b ON l.BookID = b.BookID
-                    LEFT JOIN 
-                        LibraryBranch lb ON l.BranchID = lb.BranchID
-                    LEFT JOIN
-                        Fine f ON l.LoanID = f.LoanID
-                    ORDER BY 
-                        l.BorrowDate DESC
-                ";
-
-                var loans = await connection.QueryAsync<LoanManagementViewModel>(sql);
+                var loans = await connection.QueryAsync<LoanManagementViewModel>(
+                    "GetLoanManagementData",
+                    commandType: CommandType.StoredProcedure
+                );
                 return View(loans);
             }
         }
+
 
         [HttpPost]
         [Authorize(Roles = "Admin")]
@@ -151,38 +93,20 @@ namespace Libraria.Controllers
 
             return RedirectToAction("LoanManagement");
         }
-
         [HttpGet]
         public async Task<IActionResult> ReservationManagement(string email = null)
         {
             using (var connection = new SqlConnection(_configuration.GetConnectionString("DefaultConnection")))
             {
-                var sql = @"
-                    SELECT 
-                        r.ReservationID,
-                        r.ReservationDate,
-                        u.Name,
-                        u.Surname,
-                        u.Email,
-                        b.Title AS BookTitle,
-                        lb.BranchName
-                    FROM 
-                        Reservation r
-                    INNER JOIN 
-                        UserTable u ON r.UserID = u.UserID
-                    INNER JOIN 
-                        Book b ON r.BookID = b.BookID
-                    LEFT JOIN 
-                        LibraryBranch lb ON r.BranchID = lb.BranchID
-                    WHERE (@Email IS NULL OR u.Email = @Email)
-                    ORDER BY 
-                        r.ReservationDate DESC
-                ";
-
-                var reservations = await connection.QueryAsync<ReservationManagementViewModel>(sql, new { Email = email });
+                var reservations = await connection.QueryAsync<ReservationManagementViewModel>(
+                    "GetReservationManagementData",
+                    new { Email = email },
+                    commandType: CommandType.StoredProcedure
+                );
                 return View(reservations);
             }
         }
+
 
         [HttpPost]
         [Authorize(Roles = "Admin")]
