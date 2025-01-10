@@ -24,9 +24,9 @@
         <div class="row">
             <div class="col-3 my-5">
                 <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
-                    <button class="nav-link active" id="v-pills-home-tab" data-toggle="pill" data-target="#v-pills-home" type="button" role="tab" aria-controls="v-pills-home" aria-selected="true"><img src="/img/student.png" alt="New Student"><br /><b><p class="text-center" style="color:black;">Add New Student</p></b></button>
+                    <button class="nav-link active" id="v-pills-home-tab" data-toggle="pill" data-target="#v-pills-home" type="button" role="tab" aria-controls="v-pills-home" aria-selected="true"><img src="/img/student.png" alt="New User"><br /><b><p class="text-center" style="color:black;">Add New User</p></b></button>
                     <br />
-                    <button class="nav-link" id="v-pills-profile-tab" data-toggle="pill" data-target="#v-pills-profile" type="button" role="tab" aria-controls="v-pills-profile" aria-selected="false"><img src="/img/instructor.png" alt="New Instructor"><br /><b><p class="text-center" style="color:black;">Add New Instructor</p></b></button>
+                    <button class="nav-link" id="v-pills-profile-tab" data-toggle="pill" data-target="#v-pills-profile" type="button" role="tab" aria-controls="v-pills-profile" aria-selected="false"><img src="/img/instructor.png" alt="New Admin"><br /><b><p class="text-center" style="color:black;">Add New Admin</p></b></button>
                 </div>
             </div>
             <div class="col-9">
@@ -39,10 +39,10 @@
                                         <div class="col-lg-12">
                                             <div class="p-5">
                                                 <div class="text-center">
-                                                    <h1 class="text-dark mb-4">Register New Student</h1>
-                                                    <h6 class="text-dark mb-4">You can register a new student to the system from this panel.</h6>
+                                                    <h1 class="text-dark mb-4">Register New User</h1>
+                                                    <h6 class="text-dark mb-4">You can register a new User to the system from this panel.</h6>
                                                 </div>
-                                                <form id="registerForm" method="post" action="/Panel/AddNewStudent" class="user">
+                                                <form id="registerForm" method="post" action="/Panel/AddNewUser" class="user">
                                                     <div class="form-group row">
                                                         <div class="col-sm-6 mb-3 mb-sm-0">
                                                             <div class="form-floating mb-3">
@@ -111,7 +111,7 @@
                                 </div>
                             </div>
                         </div>
-                    </div> @*Add New Student Form*@
+                    </div> @*Add New User Form*@
 
                     @**@ <div class="tab-pane fade" id="v-pills-profile" role="tabpanel" aria-labelledby="v-pills-profile-tab">
                         <div class="container">
@@ -121,10 +121,10 @@
                                         <div class="col-lg-12">
                                             <div class="p-5">
                                                 <div class="text-center">
-                                                    <h1 class="text-dark mb-4">Register New Instructor</h1>
-                                                    <h6 class="text-dark mb-4">You can register a new instructor to the system from this panel.</h6>
+                                                    <h1 class="text-dark mb-4">Register New Admin</h1>
+                                                    <h6 class="text-dark mb-4">You can register a new admin to the system from this panel.</h6>
                                                 </div>
-                                                <form id="registerForm" method="post" action="/Panel/AddNewInstructor" class="user">
+                                                <form id="registerForm" method="post" action="/Panel/AddNewAdmin" class="user">
                                                     <div class="form-group row">
                                                         <div class="col-sm-6 mb-3 mb-sm-0">
                                                             <div class="form-floating mb-3">
@@ -203,7 +203,7 @@
                                 </div>
                             </div>
                         </div>
-                    </div> @*Add New Instructor Form*@
+                    </div> @*Add New Admin Form*@
                 </div>
             </div>
         </div>
@@ -331,44 +331,23 @@
         </div>
     </div>
     <div class="tab-pane fade px-2" id="nav-contact" role="tabpanel" aria-labelledby="nav-contact-tab">
-        @{
-            List<User> students = new List<User>();
-            List<User> instructors = new List<User>();
-            List<User> admins = new List<User>();
-
-            // foreach (var user in Model.Users)
-            // {
-            //     switch (user)
-            //     {
-            //         case 1:
-            //             admins.Add(user);
-            //             break;
-            //         case 2:
-            //             students.Add(user);
-            //             break;
-            //         case 3:
-            //             instructors.Add(user);
-            //             break;
-            //     }
-            // }
-        }
         <div class="tab-pane fade show active px-2" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
             <div class="row">
                 <div class="col-3 my-5">
                     <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
-                        <button class="nav-link active" id="v-pills-home-tab" data-toggle="pill" data-target="#listStudents" type="button" role="tab" aria-controls="v-pills-home" aria-selected="true"><img src="/img/student.png" alt="New Student"><br /><b><p class="text-center" style="color:black;">List Students</p></b></button>
+                        <button class="nav-link active" id="v-pills-home-tab" data-toggle="pill" data-target="#listUsers" type="button" role="tab" aria-controls="v-pills-home" aria-selected="true"><img src="/img/student.png" alt="New User"><br /><b><p class="text-center" style="color:black;">List Users</p></b></button>
                         <br />
-                        <button class="nav-link my-5" id="v-pills-profile-tab" data-toggle="pill" data-target="#listInstructors" type="button" role="tab" aria-controls="v-pills-profile" aria-selected="false"><img src="/img/instructor.png" alt="New Instructor"><br /><b><p class="text-center" style="color:black;">List Instructors</p></b></button>
+                        <button class="nav-link my-5" id="v-pills-profile-tab" data-toggle="pill" data-target="#listAdmins" type="button" role="tab" aria-controls="v-pills-profile" aria-selected="false"><img src="/img/instructor.png" alt="New Instructor"><br /><b><p class="text-center" style="color:black;">List Instructors</p></b></button>
                         <br />
                         <button class="nav-link my-5" id="v-pills-profile-tab" data-toggle="pill" data-target="#listAdmins" type="button" role="tab" aria-controls="v-pills-profile" aria-selected="false"><img src="/img/admin.png" alt="New Instructor"><br /><b><p class="text-center" style="color:black;">List Admins</p></b></button>
                     </div>
                 </div>
                 <div class="col-9">
                     <div class="tab-content" id="v-pills-tabContent">
-                        @**@ <div class="tab-pane fade show active" id="listStudents" role="tabpanel" aria-labelledby="v-pills-home-tab">@*Add New Student Form*@
+                        @**@ <div class="tab-pane fade show active" id="listUsers" role="tabpanel" aria-labelledby="v-pills-home-tab">@*Add New User Form*@
                             <div class="card shadow mt-5">
                                 <div class="card-header">
-                                    <h6 class="m-0 font-weight-bold text-primary">Student List</h6>
+                                    <h6 class="m-0 font-weight-bold text-primary">User List</h6>
                                 </div>
                                 <div class="card-body">
                                     <div class="table-responsive">
@@ -431,10 +410,10 @@
                             </div>
                         </div>
 
-                        @**@ <div class="tab-pane fade" id="listInstructors" role="tabpanel" aria-labelledby="v-pills-profile-tab">@*Add New Instructor Form*@
+                        @**@ <div class="tab-pane fade" id="listAdmins" role="tabpanel" aria-labelledby="v-pills-profile-tab">@*Add New Admin Form*@
                             <div class="card shadow mt-5">
                                 <div class="card-header">
-                                    <h6 class="m-0 font-weight-bold text-primary">Instructor List</h6>
+                                    <h6 class="m-0 font-weight-bold text-primary">Admin List</h6>
                                 </div>
                                 <div class="card-body">
                                     <div class="table-responsive">
@@ -453,7 +432,7 @@
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                @foreach (var instructor in instructors)
+                                                @foreach (var admin in admins)
                                                 {
                                                     @* Department instructorDepartment = new Department();
                                                     if (instructor.DepartmentID.HasValue)
