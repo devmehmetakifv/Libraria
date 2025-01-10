@@ -155,7 +155,7 @@ namespace Libraria.Controllers
                 }
             }
         }
-
+        [HttpGet("Panel/BookManagement")]
         public async Task<IActionResult> BookManagement()
         {
             using (var connection = new SqlConnection(_connectionString))
@@ -174,26 +174,92 @@ namespace Libraria.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddNewBook(string title, string isbn, DateOnly publicationDate, int stockQuantity, int categoryId)
+        public async Task<IActionResult> AddNewBook(
+            string bookTitle,
+            string bookISBN,
+            DateOnly bookPublicationDate,
+            int bookStockQuantity,
+            string bookCategoryName,
+            string bookAuthorFirstName,
+            string bookAuthorLastName,
+            DateOnly bookAuthorBirthDate)
         {
             using (var connection = new SqlConnection(_connectionString))
             {
                 await connection.OpenAsync();
-                var parameters = new { Title = title, ISBN = isbn, PublicationDate = publicationDate, StockQuantity = stockQuantity, CategoryID = categoryId };
-                int rowsAffected = await connection.ExecuteAsync("INSERT INTO Book (Title, ISBN, PublicationDate, StockQuantity, CategoryID) VALUES (@Title, @ISBN, @PublicationDate, @StockQuantity, @CategoryID)", parameters);
 
-                if (rowsAffected > 0)
+                using (var transaction = connection.BeginTransaction())
                 {
-                    TempData["SuccessMessage"] = "Book added successfully!";
-                    return RedirectToAction("BookManagement");
-                }
-                else
-                {
-                    TempData["ErrorMessage"] = "Book could not be added!";
-                    return RedirectToAction("BookManagement");
+                    try
+                    {
+                        // Convert DateOnly to DateTime
+                        DateTime publicationDate = bookPublicationDate.ToDateTime(TimeOnly.MinValue);
+                        DateTime authorBirthDate = bookAuthorBirthDate.ToDateTime(TimeOnly.MinValue);
+
+                        // Check if the category exists
+                        var categoryId = await connection.ExecuteScalarAsync<int?>(
+                            "SELECT CategoryID FROM Category WHERE CategoryName = @CategoryName",
+                            new { CategoryName = bookCategoryName },
+                            transaction);
+
+                        // If the category doesn't exist, insert it
+                        if (categoryId == null)
+                        {
+                            categoryId = await connection.ExecuteScalarAsync<int>(
+                                "INSERT INTO Category (CategoryName) OUTPUT INSERTED.CategoryID VALUES (@CategoryName)",
+                                new { CategoryName = bookCategoryName },
+                                transaction);
+                        }
+
+                        // Check if the author exists
+                        var authorId = await connection.ExecuteScalarAsync<int?>(
+                            "SELECT AuthorID FROM Author WHERE FirstName = @FirstName AND LastName = @LastName AND BirthDate = @BirthDate",
+                            new { FirstName = bookAuthorFirstName, LastName = bookAuthorLastName, BirthDate = authorBirthDate },
+                            transaction);
+
+                        // If the author doesn't exist, insert them
+                        if (authorId == null)
+                        {
+                            authorId = await connection.ExecuteScalarAsync<int>(
+                                "INSERT INTO Author (FirstName, LastName, BirthDate) OUTPUT INSERTED.AuthorID VALUES (@FirstName, @LastName, @BirthDate)",
+                                new { FirstName = bookAuthorFirstName, LastName = bookAuthorLastName, BirthDate = authorBirthDate },
+                                transaction);
+                        }
+
+                        // Insert the book
+                        var bookId = await connection.ExecuteScalarAsync<int>(
+                            "INSERT INTO Book (Title, ISBN, PublicationDate, StockQuantity, CategoryID) OUTPUT INSERTED.BookID VALUES (@Title, @ISBN, @PublicationDate, @StockQuantity, @CategoryID)",
+                            new
+                            {
+                                Title = bookTitle,
+                                ISBN = bookISBN,
+                                PublicationDate = publicationDate,
+                                StockQuantity = bookStockQuantity,
+                                CategoryID = categoryId
+                            },
+                            transaction);
+
+                        // Link the book and the author in the BookAuthor table
+                        await connection.ExecuteAsync(
+                            "INSERT INTO BookAuthor (BookID, AuthorID) VALUES (@BookID, @AuthorID)",
+                            new { BookID = bookId, AuthorID = authorId },
+                            transaction);
+
+                        transaction.Commit();
+
+                        TempData["SuccessMessage"] = "Book added successfully!";
+                        return RedirectToAction("BookManagement");
+                    }
+                    catch
+                    {
+                        transaction.Rollback();
+                        TempData["ErrorMessage"] = "An error occurred while adding the book!";
+                        return RedirectToAction("BookManagement");
+                    }
                 }
             }
         }
+
 
         public async Task<IActionResult> BringBook(string bookTitle)
         {
@@ -214,13 +280,14 @@ namespace Libraria.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> EditBook(int bookId, string bookTitle, string bookISBN, DateTime bookPublicationDate, int bookStockQuantity/*, int categoryId*/)
+        public async Task<IActionResult> EditBook(int bookId, string bookTitle, string bookISBN, DateTime bookPublicationDate, int bookStockQuantity, string bookCategoryName)
         {
             using (var connection = new SqlConnection(_connectionString))
             {
                 await connection.OpenAsync();
-                var parameters = new { BookID = bookId, Title = bookTitle, ISBN = bookISBN, PublicationDate = bookPublicationDate, StockQuantity = bookStockQuantity/*, CategoryID = categoryId*/ };
-                int rowsAffected = await connection.ExecuteAsync("UPDATE Book SET Title = @Title, ISBN = @ISBN, PublicationDate = @PublicationDate, StockQuantity = @StockQuantity WHERE BookID = @BookID", parameters); //CategoryID = @CategoryID
+                var bookCategoryId = await connection.QueryFirstOrDefaultAsync<int>("SELECT CategoryID FROM Category WHERE CategoryName = @CategoryName", new { CategoryName = bookCategoryName });
+                var parameters = new { BookID = bookId, Title = bookTitle, ISBN = bookISBN, PublicationDate = bookPublicationDate, StockQuantity = bookStockQuantity, CategoryID = bookCategoryId };
+                int rowsAffected = await connection.ExecuteAsync("UPDATE Book SET Title = @Title, ISBN = @ISBN, PublicationDate = @PublicationDate, StockQuantity = @StockQuantity, CategoryID = @CategoryID WHERE BookID = @BookID", parameters);
 
                 if (rowsAffected > 0)
                 {

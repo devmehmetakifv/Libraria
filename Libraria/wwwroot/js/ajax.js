@@ -90,9 +90,9 @@ $(document).ready(function () {
         type: 'POST',
         url: '/Panel/GetCategories',
         success: function (response) {
-            console.log(response)
             if (response.success) {
                 categories = response.data;
+                console.log(categories)
             }
             else {
                 alert(response.message);
@@ -110,7 +110,6 @@ $(document).ready(function () {
         type: 'POST',
         url: '/Panel/GetGenres',
         success: function (response) {
-            console.log(response)
             if (response.success) {
                 genres = response.data;
             }
@@ -130,7 +129,6 @@ $(document).ready(function () {
         type: 'POST',
         url: '/Panel/GetAuthors',
         success: function (response) {
-            console.log(response)
             if (response.success) {
                 authors = response.data;
             }
@@ -159,6 +157,8 @@ $(document).ready(function () {
             success: function (response) {
                 if (response.success) {
                     console.log(response.data)
+                    var categoryName = categories.find(d => d.categoryID === response.data.categoryID)?.categoryName;
+                    console.log(categoryName)
                     $('#bringBookPanel').hide();
 
                     $('#fillBookId').val(response.data.bookID);
@@ -168,6 +168,7 @@ $(document).ready(function () {
                     $('#fillBookISBN').val(response.data.isbn);
                     $('#fillPublicationDate').val(response.data.publicationDate);
                     $('#fillStockQuantity').val(response.data.stockQuantity);
+                    $('#fillBookCategoryId').val(categoryName);
 
                     $('#bookDetails').show();
                 } else {
