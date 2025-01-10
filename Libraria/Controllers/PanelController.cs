@@ -110,18 +110,20 @@ namespace Libraria.Controllers
             using (var connection = new SqlConnection(_connectionString))
             {
                 await connection.OpenAsync();
-                var user = await connection.QueryFirstOrDefaultAsync<User>("SELECT UserID, Name, Surname, Email FROM UserTable WHERE Email = @Email", new { Email = email });
+                Libraria.Models.User user = await connection.QueryFirstOrDefaultAsync<Libraria.Models.User>("SELECT UserID, Name, Surname, Email FROM UserTable WHERE Email = @Email", new { Email = email });
 
                 if (user != null)
                 {
-                    return Json(new { success = true, data = user });
+                    return Json(new { success = true, data = new { user.UserID, user.Name, user.Surname, user.Email } });
                 }
                 else
                 {
-                    return Json(new { success = false, data = "User not found!" });
+                    return Json(new { success = false, message = "User not found!" });
                 }
             }
         }
+
+
 
         [HttpPost]
         public async Task<IActionResult> EditUser(int userId, string name, string surname, string email)
