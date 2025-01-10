@@ -1,0 +1,143 @@
+﻿@model IEnumerable<Libraria.Models.ReservationManagementViewModel>
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Reservation Management";
+}
+
+<style>
+    h2 {
+        color: #4e73df;
+        margin-bottom: 30px;
+        font-family: 'Arial', sans-serif;
+        font-weight: bold;
+    }
+
+    .filter-container {
+        max-width: 1200px;
+        margin: auto;
+        margin-bottom: 20px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+        .filter-container input[type="text"] {
+            padding: 10px;
+            font-size: 16px;
+            border: 2px solid #4e73df;
+            border-radius: 8px;
+            width: 100%;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+    .table-container {
+        max-width: 1200px;
+        margin: auto;
+        background-color: #ffffff;
+        border-radius: 10px;
+        padding: 20px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .table {
+        width: 100%;
+        margin-bottom: 0;
+        background-color: transparent;
+        border-collapse: collapse;
+    }
+
+        .table th, .table td {
+            padding: 12px;
+            text-align: center;
+            vertical-align: middle;
+            border-top: 1px solid #dee2e6;
+        }
+
+        .table thead th {
+            background-color: #4e73df;
+            color: #ffffff;
+            text-transform: uppercase;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .table tbody tr:hover {
+            background-color: #f8f9fc;
+        }
+
+    .btn-cancel {
+        background-color: #e74a3b;
+        color: #ffffff;
+        border: none;
+        padding: 8px 12px;
+        border-radius: 5px;
+        font-weight: 500;
+        transition: background-color 0.3s ease-in-out;
+    }
+
+        .btn-cancel:hover {
+            background-color: #c0392b;
+        }
+</style>
+
+<div class="container mt-5">
+    <h2 class="text-center">Reservation Management</h2>
+    <div class="filter-container">
+        <input type="text" id="filterInput" placeholder="Filter by email...">
+    </div>
+    <div class="table-container">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Reservation ID</th>
+                    <th>Reservation Date</th>
+                    <th>User Name</th>
+                    <th>User Surname</th>
+                    <th>Email</th>
+                    <th>Book Title</th>
+                    <th>Branch</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="reservationsTable">
+                @foreach (var reservation in Model)
+                {
+                    <tr>
+                        <td>@reservation.ReservationID</td>
+                        <td>@reservation.ReservationDate.ToString("yyyy-MM-dd")</td>
+                        <td>@reservation.Name</td>
+                        <td>@reservation.Surname</td>
+                        <td>@reservation.Email</td>
+                        <td>@reservation.BookTitle</td>
+                        <td>@reservation.BranchName</td>
+                        <td>
+                            <form asp-action="CancelReservation" method="post" class="d-inline">
+                                <input type="hidden" name="reservationId" value="@reservation.ReservationID" />
+                                <button type="submit" class="btn btn-cancel" onclick="return confirm('Are you sure you want to cancel this reservation?');">Cancel Reservation</button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const filterInput = document.getElementById('filterInput');
+            const table = document.getElementById('reservationsTable');
+
+            filterInput.addEventListener('input', function () {
+                const filterText = this.value.toLowerCase();
+                const rows = table.querySelectorAll('tr');
+                rows.forEach(row => {
+                    const email = row.children[4].textContent.toLowerCase();
+                    row.style.display = email.includes(filterText) ? '' : 'none';
+                });
+            });
+        });
+    </script>
+}

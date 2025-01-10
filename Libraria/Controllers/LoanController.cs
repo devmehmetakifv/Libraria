@@ -151,5 +151,90 @@ namespace Libraria.Controllers
 
             return RedirectToAction("LoanManagement");
         }
+
+        [HttpGet]
+        public async Task<IActionResult> ReservationManagement(string email = null)
+        {
+            using (var connection = new SqlConnection(_configuration.GetConnectionString("DefaultConnection")))
+            {
+                var sql = @"
+                    SELECT 
+                        r.ReservationID,
+                        r.ReservationDate,
+                        u.Name,
+                        u.Surname,
+                        u.Email,
+                        b.Title AS BookTitle,
+                        lb.BranchName
+                    FROM 
+                        Reservation r
+                    INNER JOIN 
+                        UserTable u ON r.UserID = u.UserID
+                    INNER JOIN 
+                        Book b ON r.BookID = b.BookID
+                    LEFT JOIN 
+                        LibraryBranch lb ON r.BranchID = lb.BranchID
+                    WHERE (@Email IS NULL OR u.Email = @Email)
+                    ORDER BY 
+                        r.ReservationDate DESC
+                ";
+
+                var reservations = await connection.QueryAsync<ReservationManagementViewModel>(sql, new { Email = email });
+                return View(reservations);
+            }
+        }
+
+        [HttpPost]
+        [Authorize(Roles = "Admin")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> CancelReservation(int reservationId)
+        {
+            if (reservationId <= 0)
+            {
+                return BadRequest();
+            }
+
+            using (var connection = new SqlConnection(_configuration.GetConnectionString("DefaultConnection")))
+            {
+                await connection.OpenAsync();
+                using (var transaction = connection.BeginTransaction())
+                {
+                    try
+                    {
+                        // Delete the reservation from the database
+                        var deleteReservationSql = @"
+                            DELETE FROM Reservation
+                            WHERE ReservationID = @ReservationID
+                        ";
+
+                        var rowsAffected = await connection.ExecuteAsync(
+                            deleteReservationSql,
+                            new { ReservationID = reservationId },
+                            transaction
+                        );
+
+                        if (rowsAffected == 0)
+                        {
+                            transaction.Rollback();
+                            return NotFound();
+                        }
+
+                        // Commit the transaction
+                        transaction.Commit();
+                    }
+                    catch (Exception ex)
+                    {
+                        transaction.Rollback();
+                        // Log the exception if necessary
+                        return StatusCode(500, "Internal server error");
+                    }
+                }
+            }
+
+            return RedirectToAction("ReservationManagement");
+        }
     }
 }
+
+
+
