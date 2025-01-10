@@ -4,13 +4,15 @@
 @using System.Security.Claims
 @inject IHttpContextAccessor HttpContextAccessor
 @inject IDbConnection DbConnection
-@{User user = null;}
+@{
+    User user = null;
+}
 @{
     var claimsPrincipal = HttpContextAccessor.HttpContext?.User;
     if (claimsPrincipal == null || !claimsPrincipal.Identity.IsAuthenticated)
     {
         <script>
-            window.location.href = "/Account/Login";
+            window.location.href = "/Account/Login"
         </script>
     }
     else
@@ -20,7 +22,7 @@
         if (string.IsNullOrEmpty(userEmail))
         {
             <script>
-                window.location.href = "/Account/Login";
+                window.location.href = "/Account/Login"
             </script>
         }
 
@@ -31,7 +33,7 @@
         if (user == null)
         {
             <script>
-                window.location.href = "/Account/Login";
+                window.location.href = "/Account/Login"
             </script>
         }
     }
@@ -66,7 +68,7 @@
 
     <!-- Page Wrapper -->
     <div id="wrapper">
-        @await Html.PartialAsync("PanelShared/General/SidebarPartials/_AdminSidebar", user);
+        @await Html.PartialAsync("PanelShared/General/SidebarPartials/_AdminSidebar", user)
         <!-- Content Wrapper -->
         <div id="content-wrapper" class="d-flex flex-column">
             <!-- Main Content  -->

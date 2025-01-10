@@ -4,10 +4,8 @@ using System.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Servisleri ekleyelim.
 builder.Services.AddControllersWithViews();
 
-// Authentication ve Authorization servislerini ekleyelim.
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>
     {
@@ -23,7 +21,6 @@ builder.Services.AddHttpClient();
 
 var app = builder.Build();
 
-// HTTP isteði iþleme hattýný yapýlandýralým.
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
@@ -35,7 +32,6 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
-// Authentication ve Authorization middleware'lerini ekleyelim.
 app.UseAuthentication();
 app.UseAuthorization();
 
