@@ -2,9 +2,6 @@
 var programs = [];
 
 $(document).ready(function () {
-    // 1: Admin
-    // 2: Student
-    // 3: Instructor
     $('#bringUserForm').on('submit', function (e) {
         e.preventDefault();
 
